@@ -2,18 +2,23 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "build": "lerna run build",
     "build:todo": "leasot -x --reporter markdown --ignore '**/node_modules/**,**.json' '**/*' > TODO.md && git add TODO.md",
+    "clean": "lerna clean --yes",
     "commit": "commit",
-    "postinstall": "lerna bootstrap --hoist"
+    "dep-update": "npx -p npm-check-updates ncu -u && npm install",
+    "postinstall": "lerna bootstrap",
+    "test": "echo \"TODO: Setup and plan for tests.\" && exit 0",
+    "version": "lerna version --conventional-commits"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
     "@commitlint/config-lerna-scopes": "^8.3.4",
     "@commitlint/prompt-cli": "^8.3.5",
-    "@quasar/cli": "^1.0.5",
-    "husky": "^4.2.3",
+    "husky": "^4.2.5",
+    "leasot": "^10.2.0",
     "lerna": "^3.20.2",
-    "lint-staged": "^10.1.2"
+    "lint-staged": "^10.1.3"
   }
 }

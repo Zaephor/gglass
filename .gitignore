@@ -1,3 +1,5 @@
+*.swp
 .idea
-node_modules
+gglass_config
 lerna-debug.log
+node_modules

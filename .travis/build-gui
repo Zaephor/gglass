@@ -1,0 +1,21 @@
+#!/bin/bash
+CONTAINER_IMAGE="node:alpine"
+
+echo "==== Building GUI distribution"
+docker run --rm -v "${PWD}/gui-src":/gui -w /gui "${CONTAINER_IMAGE}" /bin/sh -c 'npm ci && npm run build'
+
+echo "==== Clearing out old public"
+rm -R "${PWD}/public"
+
+echo "==== Fix resulting permissions"
+sudo chown "${USER}:${USER}" "${PWD}/gui-src/dist"
+
+echo "==== Copying GUI to public"
+cp -R "${PWD}/gui-src/dist" "${PWD}/public"
+
+if [[ "${USER}" == "travis" ]]; then
+  echo "==== Clearing GUI src"
+  sudo rm -R "${PWD}/gui-src"
+else
+  rm -R "${PWD}/gui-src/dist"
+fi

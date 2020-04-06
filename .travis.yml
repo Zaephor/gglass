@@ -1,0 +1,66 @@
+os: linux
+dist: bionic
+language: shell
+
+_test-common: &_test-common
+  language: node_js
+  #  node_js: "node" ## Alpine's still using node12
+  node_js: "lts/*"
+  services:
+    - redis
+
+_dep-check: &_test-deps
+  script:
+    - npx -p npm-check-updates ncu -u && npm install
+    - npm test
+
+_test: &_test
+  script:
+    - npm ci
+    - npm test
+
+_build: &_build
+  language: shell
+  env: DOCKER_CLI_EXPERIMENTAL=enabled
+  addons:
+    apt:
+      update: true
+      sources:
+        - sourceline: "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+          key_url: https://download.docker.com/linux/ubuntu/gpg
+      packages:
+        - containerd.io
+        - docker-ce
+        - docker-ce-cli
+        - jq
+        - qemu-user
+  before_install:
+    - sudo mkdir -p /etc/docker
+    - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+  before_script:
+    - sudo docker run --rm --privileged multiarch/qemu-user-static:register --reset
+    - sudo docker run --privileged linuxkit/binfmt:v0.7
+  script:
+    - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}" &> /dev/null
+    - export DOCKERFILE_PATH=Dockerfile
+    #  - bash .travis/build-gui
+    - bash .travis/build
+
+stages:
+  - name: test
+    if: (branch = master)
+  - name: build
+    if: (branch = master) AND (type != cron)
+
+jobs:
+  include:
+    - name: Test
+      stage: test
+      <<: *_test-common
+      <<: *_test
+    - name: Update deps and test
+      stage: test
+      <<: *_test-common
+      <<: *_test-deps
+    - stage: build
+      <<: *_build

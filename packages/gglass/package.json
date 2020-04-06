@@ -1,0 +1,51 @@
+{
+  "name": "gglass",
+  "private": true,
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Zaephor <Zaephor@users.noreply.github.com>",
+  "homepage": "https://github.com/Zaephor/gglass#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zaephor/gglass.git"
+  },
+  "scripts": {
+    "actionhero": "actionhero",
+    "build": "tsc --declaration",
+    "dep-update": "npx -p npm-check-updates ncu -u && npm install",
+    "dev": "ts-node-dev --no-deps --transpile-only ./src/server.ts",
+    "lint": "prettier --check src/*/** __test__/*/**",
+    "postinstall": "npm run build",
+    "pretest": "npm run build && npm run lint",
+    "pretty": "prettier --write src/*/** __test__/*/**",
+    "start": "node ./dist/server.js",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/Zaephor/gglass/issues"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "dependencies": {
+    "actionhero": "22.0.7",
+    "ws": "latest",
+    "ioredis": "latest",
+    "winston": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/jest": "latest",
+    "jest": "latest",
+    "prettier": "latest",
+    "ts-jest": "latest",
+    "ts-node-dev": "latest",
+    "typescript": "latest"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.ts?$": "ts-jest"
+    }
+  }
+}
