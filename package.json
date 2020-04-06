@@ -1,7 +1,19 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "build:todo": "leasot -x --reporter markdown --ignore '**/node_modules/**,**.json' '**/*' > TODO.md && git add TODO.md",
+    "commit": "commit",
+    "postinstall": "lerna bootstrap --hoist"
+  },
   "devDependencies": {
-    "lerna": "^3.20.2"
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@commitlint/config-lerna-scopes": "^8.3.4",
+    "@commitlint/prompt-cli": "^8.3.5",
+    "@quasar/cli": "^1.0.5",
+    "husky": "^4.2.3",
+    "lerna": "^3.20.2",
+    "lint-staged": "^10.1.2"
   }
 }
