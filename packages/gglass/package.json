@@ -29,9 +29,12 @@
   },
   "dependencies": {
     "actionhero": "22.0.7",
-    "ws": "latest",
+    "bcryptjs": "^2.4.3",
     "ioredis": "latest",
-    "winston": "latest"
+    "lowdb": "^1.0.0",
+    "uuid": "^7.0.3",
+    "winston": "latest",
+    "ws": "latest"
   },
   "devDependencies": {
     "@types/node": "latest",
