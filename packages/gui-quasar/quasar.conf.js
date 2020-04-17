@@ -87,7 +87,9 @@ module.exports = function (ctx) {
       https: false,
       port: 8081,
       proxy: {
-        '/api': 'http://localhost:8080'
+        '/api': 'http://localhost:8080',
+        '/public/js/ActionheroWebsocketClient.js': 'http://localhost:8080',
+        '/public/js/ActionheroWebsocketClient.min.js': 'http://localhost:8080'
       },
       open: false // opens browser window automatically
     },

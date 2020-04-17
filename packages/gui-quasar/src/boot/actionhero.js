@@ -2,7 +2,7 @@
 // var ActionheroWebsocketClient;
 import util from 'util'
 import Vue from 'vue'
-import '../../../gglass/public/js/ActionheroWebsocketClient'
+// import '../../../gglass/public/js/ActionheroWebsocketClient'
 
 let AhClient = new ActionheroWebsocketClient()
 
