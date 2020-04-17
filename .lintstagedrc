@@ -1,8 +1,5 @@
 {
-  "src/*/**": [
-    "prettier --write"
-  ],
-  "test/*/**": [
+  "**/{src,test,__tests__}/**/*.{js,ts,vue}": [
     "prettier --write"
   ],
 }
