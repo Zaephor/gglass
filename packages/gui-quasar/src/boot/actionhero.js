@@ -1,16 +1,10 @@
-// import something here
-// var ActionheroWebsocketClient;
-import util from 'util'
 import Vue from 'vue'
-// import '../../../gglass/public/js/ActionheroWebsocketClient'
 
 let AhClient = new ActionheroWebsocketClient()
 
-// let client = {}
 let client = Object.create(ActionheroWebsocketClient.prototype)
 
 for (let func of Object.keys(ActionheroWebsocketClient.prototype)) {
-  // console.log({func})
   client[func] = function (...args) {
     return new Promise((resolve, reject) => {
       AhClient[func](...args, (data, err) => {
@@ -21,5 +15,11 @@ for (let func of Object.keys(ActionheroWebsocketClient.prototype)) {
   }
 }
 
+// Vue.prototype.$actionhero.connect().then(success => console.log({ success })).catch(err => {console.log({ err })})
+AhClient.connect((err, details) => {
+  if (err !== null) {
+    console.log(err)
+  }
+})
+
 Vue.prototype.$actionhero = client
-Vue.prototype.$actionhero.connect()

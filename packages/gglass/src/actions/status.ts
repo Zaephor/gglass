@@ -19,6 +19,7 @@ module.exports = class Status extends Action {
       actionheroVersion: "9.4.1",
       uptime: 10469
     };
+    this.logLevel = 'debug';
   }
 
   async checkRam(data) {
