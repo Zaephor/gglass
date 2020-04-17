@@ -1,160 +1,59 @@
 <template>
-  <q-drawer v-model="gglass.navDisplay" side="left" overlay behavior="desktop" bordered>
-    <q-tabs v-model="tabNav" align="justify">
-      <q-tab name="home" icon="home" v-if="gglass.user !== false"/>
-      <q-tab name="profile" icon="person"/>
+  <q-drawer
+    v-model="gglass.navDisplay"
+    side="left"
+    overlay
+    behavior="desktop"
+    bordered
+  >
+    <q-tabs v-model="tabNav" align="justify" dense>
+      <q-tab name="menu" icon="home" v-if="gglass.user !== false" />
+      <q-tab name="profile" icon="person" />
     </q-tabs>
     <q-tab-panels v-model="tabNav" animated>
-      <q-tab-panel name="home" icon="home" class="q-pa-none" v-if="gglass.user !== false">
-        Home
+      <q-tab-panel
+        name="menu"
+        icon="home"
+        class="q-pa-none"
+        v-if="gglass.user !== false"
+      >
+        <menu-panel />
       </q-tab-panel>
       <q-tab-panel name="profile" icon="person" class="q-pa-none">
-        <q-list>
-          <template v-if="gglass.user === false">
-
-            <q-expansion-item dense dense-toggle expand-separator icon="create" label="Register/Login">
-              <q-card>
-                <q-card-section>
-
-                  <q-form @submit="userLogin" @reset="userReset" class="q-gutter-sm" ref="loginForm">
-                    <q-input filled dense bottom-slots name="userEmail" v-model="userEmail" label="Email" :rules="[
-                      val => val && val.length > 0 || 'Please enter something.',
-                      val => /\S+@\S+\.\S+/.test(val) || 'Please enter a valid email.'
-                    ]"/>
-
-                    <q-input filled dense name="userPassword" v-model="userPassword" :type="isPwd ? 'password' : 'text'"
-                             label="Password" :rules="[
-                               val => val && val.length >= 8 || 'Please use a password longer than 8 characters',
-                             ]">
-                      <template v-slot:append>
-                        <q-icon
-                          :name="isPwd ? 'visibility_off' : 'visibility'"
-                          class="cursor-pointer"
-                          @click="isPwd = !isPwd"
-                        />
-                      </template>
-                    </q-input>
-
-                    <div align="right">
-                      <q-btn-group push>
-                        <q-btn push label="Reset" type="reset" size="sm" tabindex="-1"/>
-                        <q-btn push label="Register" v-on:click="userRegister" size="sm" tabindex="-1"/>
-                        <q-btn push label="Login" type="submit" name="login" size="sm"/>
-                      </q-btn-group>
-                    </div>
-                  </q-form>
-
-                </q-card-section>
-              </q-card>
-
-            </q-expansion-item>
-
-          </template>
-          <template v-if="gglass.user !== false">
-
-            <q-expansion-item dense dense-toggle expand-separator icon="face" label="User Profile">
-              <q-card>
-                <q-card-section>
-                  {{ gglass.user.id }}
-                  {{ gglass.user.email }}
-                  {{ gglass.groups }}
-                </q-card-section>
-              </q-card>
-            </q-expansion-item>
-
-            <q-item clickable v-ripple dense v-on:click="gglassLogout">
-              <q-item-section avatar>
-                <q-icon name="eject"/>
-              </q-item-section>
-              <q-item-section>Logout</q-item-section>
-            </q-item>
-
-            <template v-if="gglass.groups !== false && gglass.groups.includes('admin')">
-              <q-separator/>
-
-              <q-expansion-item dense dense-toggle expand-separator icon="person" label="Users">
-                <q-card>
-                  <q-card-section>
-                    TODO
-                  </q-card-section>
-                </q-card>
-              </q-expansion-item>
-
-              <q-expansion-item dense dense-toggle expand-separator icon="people" label="Groups">
-                <q-card>
-                  <q-card-section>
-                    TODO
-                  </q-card-section>
-                </q-card>
-              </q-expansion-item>
-
-              <q-expansion-item dense dense-toggle expand-separator icon="create" label="Menu Editor">
-                <q-card>
-                  <q-card-section>
-                    TODO
-                  </q-card-section>
-                </q-card>
-              </q-expansion-item>
-            </template>
-
-          </template>
-        </q-list>
+        <user-panel />
       </q-tab-panel>
     </q-tab-panels>
   </q-drawer>
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+import UserPanel from "../components/UserPanel";
+import MenuPanel from "../components/MenuPanel";
+import { mapState, mapActions } from "vuex";
 
-  export default {
-    computed: {
-      ...mapState({
-          gglass: state => state.gglass,
-        }
-      )
-    },
-    data () {
-      return {
-        tabNav: 'profile',
-        isPwd: true,
-        userEmail: null,
-        userPassword: null
-      }
-    },
-    methods: {
-      ...mapActions('gglass', [
-        'toggleGlassNav', // -> this.toggleGlassNav()
-        'gglassRegister',
-        'gglassLogin',
-        'gglassWhoami',
-        'gglassLogout'
-      ]),
-      userRegister: async function (event) {
-        let valid = await this.$refs.loginForm.validate()
-        if (valid) {
-          await this.gglassRegister({ email: this.userEmail, password: this.userPassword })
-
-          if (this.gglass.user !== false) {
-            this.userEmail = null
-          }
-          this.userPassword = null
-        }
-      },
-      userLogin: async function () {
-        await this.gglassLogin({ email: this.userEmail, password: this.userPassword })
-        if (this.gglass.user !== false) {
-          this.userEmail = null
-        }
-        this.userPassword = null
-      },
-      userReset: function () {
-        this.userEmail = null
-        this.userPassword = null
-      }
-    },
-    created: function () {
-      this.gglassWhoami()
-    }
-  }
+export default {
+  components: {
+    UserPanel,
+    MenuPanel,
+  },
+  computed: {
+    ...mapState({
+      gglass: (state) => state.gglass,
+    }),
+  },
+  data() {
+    return {
+      tabNav: "profile",
+    };
+  },
+  methods: {
+    ...mapActions("gglass", [
+      "toggleGlassNav", // -> this.toggleGlassNav()
+      "gglassWhoami",
+    ]),
+  },
+  created: function () {
+    this.gglassWhoami();
+  },
+};
 </script>
