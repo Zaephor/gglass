@@ -100,6 +100,7 @@ export class WhoAmIAction extends Action {
     super();
     this.name = commandPrefix + "whoami";
     this.description = "Determine who I am";
+    this.logLevel = "debug";
     this.inputs = {};
     this.outputExample = {};
   }
