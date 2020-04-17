@@ -1,8 +1,8 @@
-# gglass 
+# gglass
 
 Build  
  [![Build Status](https://travis-ci.com/Zaephor/gglass.svg?branch=master)](https://travis-ci.com/Zaephor/gglass)
- ![Docker Pulls](https://img.shields.io/docker/pulls/zaephor/gglass)
+![Docker Pulls](https://img.shields.io/docker/pulls/zaephor/gglass)
 
 Prod  
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/zaephor/gglass/latest)
