@@ -22,3 +22,4 @@ for (let func of Object.keys(ActionheroWebsocketClient.prototype)) {
 }
 
 Vue.prototype.$actionhero = client
+Vue.prototype.$actionhero.connect()

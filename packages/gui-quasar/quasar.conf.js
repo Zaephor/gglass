@@ -88,8 +88,9 @@ module.exports = function (ctx) {
       port: 8081,
       proxy: {
         '/api': 'http://localhost:8080',
+        '/primus': { target: 'ws://localhost:8080', ws: true },
         '/public/js/ActionheroWebsocketClient.js': 'http://localhost:8080',
-        '/public/js/ActionheroWebsocketClient.min.js': 'http://localhost:8080'
+        '/public/js/ActionheroWebsocketClient.min.js': 'http://localhost:8080',
       },
       open: false // opens browser window automatically
     },
