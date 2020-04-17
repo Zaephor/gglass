@@ -3,6 +3,6 @@ export default function () {
     navDisplay: true,
     nav: [],
     user: false,
-    groups: false
-  }
+    groups: false,
+  };
 }

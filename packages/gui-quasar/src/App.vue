@@ -6,6 +6,6 @@
 
 <script>
 export default {
-  name: 'gglass'
-}
+  name: "gglass",
+};
 </script>
