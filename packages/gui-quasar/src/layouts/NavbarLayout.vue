@@ -6,7 +6,7 @@
     behavior="desktop"
     bordered
   >
-    <q-tabs v-model="tabNav" align="justify" dense>
+    <q-tabs v-model="tabNav" align="justify">
       <q-tab name="menu" icon="home" v-if="gglass.user !== false" />
       <q-tab name="profile" icon="person" />
     </q-tabs>
