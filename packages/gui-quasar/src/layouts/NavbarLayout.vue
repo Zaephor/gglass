@@ -20,21 +20,29 @@
         <menu-panel />
       </q-tab-panel>
       <q-tab-panel name="profile" icon="person" class="q-pa-none">
-        <user-panel />
+        <q-list>
+          <user-auth />
+          <user-admin />
+          <site-admin />
+        </q-list>
       </q-tab-panel>
     </q-tab-panels>
   </q-drawer>
 </template>
 
 <script>
-import UserPanel from "../components/UserPanel";
 import MenuPanel from "../components/MenuPanel";
 import { mapState, mapActions } from "vuex";
+import UserAuth from "components/UserAuth";
+import UserAdmin from "components/UserAdmin";
+import SiteAdmin from "components/SiteAdmin";
 
 export default {
   components: {
-    UserPanel,
     MenuPanel,
+    UserAuth,
+    UserAdmin,
+    SiteAdmin,
   },
   computed: {
     ...mapState({
