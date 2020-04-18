@@ -284,7 +284,7 @@ export class LogoutProfileAction extends Action {
       data.response.success = await session.destroy(data.connection);
       let cookieName = config.servers.web.fingerprintOptions.cookieKey;
       let oldDate = new Date(1).toUTCString();
-      data.connection.rawConnection.responseHeaders.push([
+      await data.connection.rawConnection.responseHeaders.push([
         "Set-Cookie",
         cookieName + "=X; expires=" + oldDate + "; path=/",
       ]);
