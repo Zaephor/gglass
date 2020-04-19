@@ -2,6 +2,10 @@ export function toggleGlassNav({ commit }) {
   commit("toggleGlassNav");
 }
 
+export function setNavTab({ commit }, data) {
+  commit("setNavTab", data);
+}
+
 export async function gglassWhoami({ commit }) {
   let Vue = this._vm;
   let result = await Vue.$actionhero.action("user:whoami", {});
@@ -28,6 +32,7 @@ export async function gglassRegister({ commit }, { email, password }) {
     //TODO: Error popup
   } else {
     commit("updateProfile", result.user);
+    commit("setNavTab", "menu");
   }
 }
 
@@ -38,11 +43,13 @@ export async function gglassLogin({ commit }, { email, password }) {
     //TODO: Error popup
   } else {
     commit("updateProfile", result.user);
+    commit("setNavTab", "menu");
   }
 }
 
 export function gglassLogout({ commit }) {
   let Vue = this._vm;
   Vue.$actionhero.action("user:logout", {});
+  commit("setNavTab", "profile");
   commit("clearProfile");
 }

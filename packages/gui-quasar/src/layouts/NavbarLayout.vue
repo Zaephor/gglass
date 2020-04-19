@@ -6,11 +6,11 @@
     behavior="desktop"
     bordered
   >
-    <q-tabs v-model="tabNav" align="justify">
+    <q-tabs v-model="navTab" align="justify">
       <q-tab name="menu" icon="home" v-if="gglass.user !== false" />
       <q-tab name="profile" icon="person" />
     </q-tabs>
-    <q-tab-panels v-model="tabNav" animated>
+    <q-tab-panels v-model="navTab" animated>
       <q-tab-panel
         name="menu"
         icon="home"
@@ -48,16 +48,27 @@ export default {
     ...mapState({
       gglass: (state) => state.gglass,
     }),
+    navTab: {
+      get: function () {
+        if (this.gglass.user === false) {
+          return "profile";
+        } else {
+          return this.gglass.navTab;
+        }
+      },
+      set: function (a) {
+        this.setNavTab(a);
+      },
+    },
   },
   data() {
-    return {
-      tabNav: "profile",
-    };
+    return {};
   },
   methods: {
     ...mapActions("gglass", [
       "toggleGlassNav", // -> this.toggleGlassNav()
       "gglassWhoami",
+      "setNavTab",
     ]),
   },
   created: function () {

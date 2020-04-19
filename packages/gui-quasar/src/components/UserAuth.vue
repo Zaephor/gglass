@@ -124,6 +124,7 @@ export default {
   methods: {
     ...mapActions("gglass", [
       "toggleGlassNav", // -> this.toggleGlassNav()
+      "setNavTab",
       "gglassRegister",
       "gglassLogin",
       "gglassWhoami",

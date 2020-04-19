@@ -1,7 +1,9 @@
-// export function someMutation (/* state */) {
-// }
 export function toggleGlassNav(state) {
   state.navDisplay = !state.navDisplay;
+}
+
+export function setNavTab(state, data) {
+  state.navTab = data;
 }
 
 export function updateProfile(state, data) {
