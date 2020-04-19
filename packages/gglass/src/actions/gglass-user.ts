@@ -282,12 +282,12 @@ export class LogoutProfileAction extends Action {
   async run(data) {
     if (data.session !== false) {
       data.response.success = await session.destroy(data.connection);
-      let cookieName = config.servers.web.fingerprintOptions.cookieKey;
-      let oldDate = new Date(1).toUTCString();
-      await data.connection.rawConnection.responseHeaders.push([
-        "Set-Cookie",
-        cookieName + "=X; expires=" + oldDate + "; path=/",
-      ]);
+      // let cookieName = config.servers.web.fingerprintOptions.cookieKey;
+      // let oldDate = new Date(1).toUTCString();
+      // // data.connection.rawConnection.responseHeaders.push([
+      //   "Set-Cookie",
+      //   cookieName + "=X; expires=" + oldDate + "; path=/",
+      // ]);
     } else {
       data.response.success = false;
       data.response.error = "Not logged in.";
