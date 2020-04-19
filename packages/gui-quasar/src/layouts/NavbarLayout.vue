@@ -7,7 +7,11 @@
     bordered
   >
     <q-tabs v-model="navTab" align="justify">
-      <q-tab name="menu" icon="home" v-if="gglass.user !== false" />
+      <q-tab
+        name="menu"
+        :icon="gglass.menuEditor ? 'settings' : 'home'"
+        v-if="gglass.user !== false"
+      />
       <q-tab name="profile" icon="person" />
     </q-tabs>
     <q-tab-panels v-model="navTab" animated>
@@ -31,8 +35,8 @@
 </template>
 
 <script>
-import MenuPanel from "../components/MenuPanel";
 import { mapState, mapActions } from "vuex";
+import MenuPanel from "../components/MenuPanel";
 import UserAuth from "components/UserAuth";
 import UserAdmin from "components/UserAdmin";
 import SiteAdmin from "components/SiteAdmin";
