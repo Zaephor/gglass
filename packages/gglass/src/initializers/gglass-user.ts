@@ -2,10 +2,10 @@ import { Initializer, log, action } from "actionhero";
 import { db } from "../modules/ah-lowdb-plugin";
 import { middleware, model } from "../modules/gglass-user";
 
-export class GglassProfileInitializer extends Initializer {
+export class GglassUserInitializer extends Initializer {
   constructor() {
     super();
-    this.name = "gglass-profile";
+    this.name = "gglass-user";
     this.loadPriority = 1100;
     this.startPriority = 1100;
     this.stopPriority = 1100;
@@ -17,7 +17,22 @@ export class GglassProfileInitializer extends Initializer {
       name: "admin",
       display: "Admin",
     };
-    db.initialize("user", { users: [], groups: [adminGroup] });
+    let userGroup: model.group = {
+      name: "user",
+      display: "User",
+    };
+    let guestGroup: model.group = {
+      name: "guest",
+      display: "Guest",
+    };
+    let anonGroup: model.group = {
+      name: "anon",
+      display: "Anonymous",
+    };
+    db.initialize("user", {
+      users: [],
+      groups: [adminGroup, userGroup, guestGroup, anonGroup],
+    });
     action.addMiddleware(middleware["user:inject"]);
   }
 }
