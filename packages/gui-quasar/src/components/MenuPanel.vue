@@ -51,8 +51,10 @@ export default {
     }),
   },
   methods: {
-    ...mapActions("gglass", []),
+    ...mapActions("gglass", ["syncNav"]),
   },
-  created: function () {},
+  created: function () {
+    this.syncNav();
+  },
 };
 </script>

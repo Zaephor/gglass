@@ -9,15 +9,18 @@
     >
       <q-separator />
 
-      <q-item>
-        <q-item-section avatar>
-          <q-icon name="create" />
-        </q-item-section>
-        <q-item-section>Menu Editor</q-item-section>
-        <q-item-section side>
-          TODO
-        </q-item-section>
-      </q-item>
+      <q-expansion-item
+        expand-separator
+        default-opened
+        icon="create"
+        label="Menu Editor"
+      >
+        <q-card>
+          <q-card-section>
+            <menu-editor />
+          </q-card-section>
+        </q-card>
+      </q-expansion-item>
 
       <q-expansion-item expand-separator icon="settings" label="Site Settings">
         <q-card>
@@ -32,10 +35,13 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import MenuEditor from "components/MenuEditor";
 
 export default {
   name: "SiteAdmin",
-  components: {},
+  components: {
+    MenuEditor,
+  },
   computed: {
     ...mapState({
       gglass: (state) => state.gglass,

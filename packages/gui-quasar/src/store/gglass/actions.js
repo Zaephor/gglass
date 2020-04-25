@@ -6,6 +6,16 @@ export function setNavTab({ commit }, data) {
   commit("setNavTab", data);
 }
 
+export async function syncNav({ commit }) {
+  let Vue = this._vm;
+  let result = await Vue.$actionhero.action("menu:list", {});
+  if (!!result.menu) {
+    commit("syncNav", result.menu);
+  } else {
+    commit("syncNav", []);
+  }
+}
+
 export async function gglassWhoami({ commit }) {
   let Vue = this._vm;
   let result = await Vue.$actionhero.action("user:whoami", {});

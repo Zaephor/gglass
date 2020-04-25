@@ -4,10 +4,10 @@
     <q-item
       :clickable="!!(element.path || element.url)"
       :inset-level="type !== 'root' ? 0.3 : 0"
-      :tag="element.url ? 'a' : 'div'"
-      :href="element.url ? element.url : undefined"
+      :tag="url ? 'a' : 'div'"
+      :to="to"
+      :href="url"
       :target="element.target ? element.target : undefined"
-      :to="element.path ? element.path : undefined"
     >
       <q-item-section avatar>
         <q-icon :name="element.icon" />
@@ -32,6 +32,16 @@ export default {
     ...mapState({
       gglass: (state) => state.gglass,
     }),
+    url() {
+      return !(!!this.element.url && this.element.url.startsWith("/"))
+        ? this.element.url
+        : undefined;
+    },
+    to() {
+      return !!this.element.url && this.element.url.startsWith("/")
+        ? this.element.url
+        : undefined;
+    },
   },
   methods: {},
   created: function () {},

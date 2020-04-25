@@ -6,6 +6,10 @@ export function setNavTab(state, data) {
   state.navTab = data;
 }
 
+export function syncNav(state, data) {
+  state.nav = data;
+}
+
 export function updateProfile(state, data) {
   if (data.email && data.id) {
     state.user = {
