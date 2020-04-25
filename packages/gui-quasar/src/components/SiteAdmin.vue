@@ -17,7 +17,7 @@
       >
         <q-card>
           <q-card-section>
-            <menu-editor />
+            <admin-menu-editor />
           </q-card-section>
         </q-card>
       </q-expansion-item>
@@ -35,12 +35,12 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import MenuEditor from "components/MenuEditor";
+import AdminMenuEditor from "components/AdminMenuEditor";
 
 export default {
   name: "SiteAdmin",
   components: {
-    MenuEditor,
+    AdminMenuEditor,
   },
   computed: {
     ...mapState({

@@ -108,7 +108,7 @@
 import { mapActions, mapState } from "vuex";
 
 export default {
-  name: "UserPanel",
+  name: "Auth",
   computed: {
     ...mapState({
       gglass: (state) => state.gglass,
