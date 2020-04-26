@@ -138,10 +138,7 @@ export default {
   },
   methods: {
     ...mapActions("gglass", []),
-    async createEntry(a, b, c) {
-      console.log("Hi!");
-      console.log({ a, b, c });
-      console.log(JSON.stringify({ entry: this.entry }));
+    async createEntry() {
       await this.$actionhero.action("admin:menu:upsert", this.entry);
       await this.syncMenu();
     },
@@ -169,6 +166,7 @@ export default {
         url: null,
         target: null,
         parent: null,
+        groups: [],
       };
     },
     async deleteEntry() {
