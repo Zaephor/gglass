@@ -1,8 +1,11 @@
 {
-  "**/{src,test,__tests__}/**/*.{js,ts,vue,json,md}": [
+  "**/{src,test,__tests__}/**/*.{js,ts,vue,json,md,yml,yaml}": [
     "prettier --write"
   ],
-  "*.{js,ts,vue,json,md}": [
+  "*.{js,ts,vue,json,md,yml,yaml}": [
+    "prettier --write"
+  ],
+  ".*.{js,ts,vue,json,md,yml,yaml}": [
     "prettier --write"
   ],
 }
