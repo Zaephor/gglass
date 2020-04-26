@@ -26,8 +26,21 @@
       <q-tab-panel name="profile" icon="person" class="q-pa-none">
         <q-list>
           <user-auth />
-          <user-admin />
-          <site-admin />
+
+          <template
+            v-if="
+              gglass.user !== false &&
+              gglass.groups !== false &&
+              gglass.groups.includes('admin')
+            "
+          >
+            <q-separator />
+            <admin-user />
+            <admin-group />
+            <q-separator />
+            <admin-menu-editor />
+            <site-settings />
+          </template>
         </q-list>
       </q-tab-panel>
     </q-tab-panels>
@@ -38,15 +51,19 @@
 import { mapState, mapActions } from "vuex";
 import MenuPanel from "../components/MenuPanel";
 import UserAuth from "components/UserAuth";
-import UserAdmin from "components/UserAdmin";
-import SiteAdmin from "components/SiteAdmin";
+import AdminUser from "components/AdminUser";
+import AdminGroup from "components/AdminGroup";
+import AdminMenuEditor from "components/AdminMenuEditor";
+import SiteSettings from "components/SiteSettings";
 
 export default {
   components: {
     MenuPanel,
     UserAuth,
-    UserAdmin,
-    SiteAdmin,
+    AdminUser,
+    AdminGroup,
+    AdminMenuEditor,
+    SiteSettings,
   },
   computed: {
     ...mapState({
