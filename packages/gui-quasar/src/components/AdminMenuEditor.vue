@@ -1,10 +1,5 @@
 <template>
-  <q-expansion-item
-    expand-separator
-    default-opened
-    icon="create"
-    label="Menu Editor"
-  >
+  <q-expansion-item expand-separator icon="create" label="Menu Editor">
     <q-card>
       <q-card-section>
         <q-input
