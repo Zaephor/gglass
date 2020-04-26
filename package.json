@@ -8,6 +8,9 @@
     "commit": "commit",
     "dep-update": "npx -p npm-check-updates ncu -u && npm install",
     "postinstall": "lerna bootstrap",
+    "prettier": "npm run prettier:root && npm run prettier:packages",
+    "prettier:root": "prettier --write *.{js,ts,vue,json,md,yml,yaml} .*.{js,ts,vue,json,md,yml,yaml}",
+    "prettier:packages": "prettier --write **/{src,test,__tests__}/**/*.{js,ts,vue,json,md,yml,yaml}",
     "test": "echo \"TODO: Setup and plan for tests.\" && exit 0",
     "version": "lerna version --conventional-commits"
   },
