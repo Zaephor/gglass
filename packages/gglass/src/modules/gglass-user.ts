@@ -12,7 +12,8 @@ export namespace model {
   }
   export interface group {
     id: string;
-    label: string;
+    // label: string;
+    icon?: string;
   }
 }
 

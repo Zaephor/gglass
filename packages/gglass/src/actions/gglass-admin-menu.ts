@@ -37,6 +37,7 @@ export class AdminMenuList extends Action {
       ],
     };
   }
+  //TODO: Add admin-level validation
 
   async run(data) {
     await api.lowdb["menu"].read(); // Sync DB
@@ -78,7 +79,7 @@ export class AdminMenuUpsert extends Action {
     this.name = commandPrefix + "upsert";
     this.description = "Create/update nav item";
     this.inputs = {
-      id: { required: true },
+      id: { required: false },
       label: { required: true },
       order: { required: false },
       icon: { required: false },
@@ -89,6 +90,7 @@ export class AdminMenuUpsert extends Action {
     };
     this.outputExample = {};
   }
+  //TODO: Add admin-level validation
 
   // async run(data) {
   async run(data) {
@@ -96,7 +98,7 @@ export class AdminMenuUpsert extends Action {
 
     let newEntry: model.entry = {
       id:
-        !!data.params.id && data.params.id !== "new"
+        !!data.params.id && data.params.id !== "new" && data.params.id !== ""
           ? data.params.id
           : uuidv4(),
       label: data.params.label,
@@ -143,8 +145,10 @@ export class AdminMenuDelete extends Action {
     };
     this.outputExample = {};
   }
+  //TODO: Add admin-level validation
 
   async run(data) {
+    data.response.deleted = false;
     await api.lowdb["menu"].read(); // Sync DB
 
     data.response.entry = await api.lowdb["menu"]

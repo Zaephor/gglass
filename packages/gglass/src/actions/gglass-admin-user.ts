@@ -2,7 +2,7 @@ import { Action, api, config } from "actionhero";
 import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcryptjs";
 
-const commandPrefix = "admin:user";
+const commandPrefix = "admin:user:";
 const saltRounds = 5;
 
 function omitKeys(obj, filter) {
@@ -43,7 +43,7 @@ export class ListUserAction extends Action {
 export class CreateUserAction extends Action {
   constructor() {
     super();
-    this.name = commandPrefix + "create";
+    this.name = commandPrefix + "upsert";
     this.description = "Create a new user";
     this.inputs = {};
     this.outputExample = {};
