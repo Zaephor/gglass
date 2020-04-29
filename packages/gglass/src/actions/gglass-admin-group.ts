@@ -27,6 +27,7 @@ export class ListGroupAction extends Action {
   }
 }
 
+// TODO: Upsert was because I'm lazy... Should probably split this too
 export class CreateGroupAction extends Action {
   constructor() {
     super();

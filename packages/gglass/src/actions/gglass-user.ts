@@ -6,8 +6,9 @@ import * as bcrypt from "bcryptjs";
 
 const commandPrefix = "user:";
 const saltRounds = 5;
+const hideAttributes = ["password"];
 
-function omitKeys(obj, filter) {
+function omitKeysObject(obj, filter) {
   filter = !Array.isArray(filter) ? [filter] : filter;
   return typeof obj !== "object"
     ? obj
@@ -18,6 +19,9 @@ function omitKeys(obj, filter) {
         return o;
       }, {});
 }
+
+// TODO: Add google auth login flow
+// TODO: Consider other auth login flows
 
 export class WhoAmIAction extends Action {
   constructor() {
@@ -31,7 +35,7 @@ export class WhoAmIAction extends Action {
 
   async run(data) {
     data.response.session = data.session;
-    data.response.user = await omitKeys(data.user, ["password"]);
+    data.response.user = await omitKeysObject(data.user, hideAttributes);
     // data.response.user = data.user;
   }
 }
@@ -79,10 +83,10 @@ export class LoginProfileAction extends Action {
         // Password valid, attach to user session
         await session.create(
           data.connection,
-          await omitKeys(userCheck, ["password"])
+          await omitKeysObject(userCheck, hideAttributes)
         );
         // data.response.userId = userCheck.id;
-        data.response.user = await omitKeys(userCheck, ["password"]);
+        data.response.user = await omitKeysObject(userCheck, hideAttributes);
       }
     }
   }
@@ -140,10 +144,10 @@ export class RegisterProfileAction extends Action {
       }
       let userCheck = api.lowdb["user"].get("users").push(newUser).write()[0];
       data.response.created = true;
-      data.response.user = await omitKeys(userCheck, ["password"]);
+      data.response.user = await omitKeysObject(userCheck, hideAttributes);
       await session.create(
         data.connection,
-        await omitKeys(userCheck, ["password"])
+        await omitKeysObject(userCheck, hideAttributes)
       );
       // data.response.userId = userId;
     }
