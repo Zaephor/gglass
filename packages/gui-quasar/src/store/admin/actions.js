@@ -1,7 +1,7 @@
 export async function syncUsers({ commit }) {
   let Vue = this._vm;
   let result = await Vue.$actionhero.action("admin:user:list", {});
-  if (!!result.menu) {
+  if (!!result.users) {
     commit("syncUsers", result.users);
   } else {
     commit("syncUsers", []);
@@ -11,7 +11,7 @@ export async function syncUsers({ commit }) {
 export async function syncGroups({ commit }) {
   let Vue = this._vm;
   let result = await Vue.$actionhero.action("admin:group:list", {});
-  if (!!result.menu) {
+  if (!!result.groups) {
     commit("syncGroups", result.groups);
   } else {
     commit("syncGroups", []);

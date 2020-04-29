@@ -1,5 +1,10 @@
 <template>
-  <q-expansion-item expand-separator icon="create" label="Menu Editor">
+  <q-expansion-item
+    expand-separator
+    icon="create"
+    label="Menu Editor"
+    @before-show="syncMenu"
+  >
     <q-card>
       <q-card-section>
         <q-input
@@ -18,7 +23,7 @@
             />
           </template>
           <template v-slot:after>
-            <q-btn round size="sm" icon="add" @click="entry.id = 'new'" />
+            <q-btn round size="sm" icon="add" @click="entry.id = ''" />
           </template>
         </q-input>
 
@@ -44,7 +49,11 @@
           <!--          </template>-->
         </q-tree>
 
-        <q-dialog v-model="editElement" @hide="resetEntry">
+        <q-dialog
+          v-model="editElement"
+          @hide="resetEntry"
+          @before-show="loadEntry"
+        >
           <q-card style="width: 700px; max-width: 80vw;" class="q-pt-none">
             <q-form @submit="createEntry" @reset="resetEntry">
               <q-card-section>
@@ -141,24 +150,22 @@ export default {
   },
   computed: {
     ...mapState({
-      // admin: (state) => state.admin,
-      // users: (state) => state.admin.users,
       groups: (state) => state.admin.groups,
       menu: (state) => state.admin.menu,
     }),
     editElement: {
       get: function () {
-        if (!!this.entry.id) {
-          if (this.entry.id !== "new") {
-            this.loadEntry();
-          } else {
-            this.syncGroups();
-          }
-        }
-        return !!this.entry.id;
+        // if (!!this.entry.id) {
+        //   this.syncGroups();
+        //   if (this.entry.id !== "new") {
+        //     this.loadEntry();
+        //   }
+        // }
+        // return !!this.entry.id;
+        return this.entry.id !== null;
       },
       set: function () {
-        this.entry.id = !this.entry.id;
+        this.entry.id = null;
       },
     },
   },
@@ -169,7 +176,6 @@ export default {
       await this.syncMenu();
     },
     async loadEntry() {
-      await this.syncGroups();
       let results = await this.$actionhero.action("admin:menu:list", {
         id: this.entry.id,
       });
@@ -211,9 +217,6 @@ export default {
   },
   created: function () {
     this.resetEntry();
-    // Shift this to only occur when menu executes show
-    this.syncGroups();
-    this.syncMenu();
   },
 };
 </script>
