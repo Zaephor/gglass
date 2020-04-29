@@ -30,7 +30,7 @@
     "@quasar/extras": "^1.6.4",
     "axios": "^0.19.2",
     "quasar": "^1.9.16",
-    "vue-i18n": "^8.17.3"
+    "vue-i18n": "^8.17.4"
   },
   "devDependencies": {
     "@quasar/app": "^1.7.4",
