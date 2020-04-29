@@ -1,7 +1,5 @@
 import { Action, api, config } from "actionhero";
 import { model } from "../modules/gglass-user";
-import { v4 as uuidv4 } from "uuid";
-import * as bcrypt from "bcryptjs";
 
 const commandPrefix = "admin:group:";
 
