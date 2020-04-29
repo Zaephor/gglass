@@ -14,20 +14,20 @@ export class GglassUserInitializer extends Initializer {
   async initialize() {
     log("[" + this.loadPriority + "] " + this.name + ": Initializing");
     let adminGroup: model.group = {
-      name: "admin",
-      display: "Admin",
+      id: "admin",
+      label: "Admin",
     };
     let userGroup: model.group = {
-      name: "user",
-      display: "User",
+      id: "user",
+      label: "User",
     };
     let guestGroup: model.group = {
-      name: "guest",
-      display: "Guest",
+      id: "guest",
+      label: "Guest",
     };
     let anonGroup: model.group = {
-      name: "anon",
-      display: "Anonymous",
+      id: "anon",
+      label: "Anonymous",
     };
     db.initialize("user", {
       users: [],

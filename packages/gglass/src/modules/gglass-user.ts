@@ -11,8 +11,8 @@ export namespace model {
     groups?: string[];
   }
   export interface group {
-    name: string;
-    display: string;
+    id: string;
+    label: string;
   }
 }
 
