@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "lerna run build",
-    "build:todo": "leasot -x --reporter markdown --ignore '**/node_modules/**,**.json' '**/*' > TODO.md && git add TODO.md",
+    "build:todo": "leasot -x --reporter markdown --ignore '**/dist/**,**/node_modules/**,**.json' '**/*.{js,ts,vue,md,yml,yaml}' > TODO.md && prettier --write TODO.md && git add TODO.md",
     "clean": "lerna clean --yes",
     "commit": "commit",
     "dep-update": "npx -p npm-check-updates ncu -u && npm install",
