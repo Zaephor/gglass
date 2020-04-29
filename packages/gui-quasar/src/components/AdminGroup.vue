@@ -7,16 +7,17 @@
   >
     <q-card>
       <q-card-section>
+        <!-- Tree display -->
         <q-input
-          ref="menuFilter"
+          ref="groupFilter"
           filled
-          v-model="menuFilter"
+          v-model="groupFilter"
           label="Filter"
           dense
         >
           <template v-slot:append>
             <q-icon
-              v-if="menuFilter !== ''"
+              v-if="groupFilter !== ''"
               name="clear"
               class="cursor-pointer"
               @click="resetFilter"
@@ -28,7 +29,7 @@
         </q-input>
 
         <!-- TODO: Figure out how the heck to get the accordion to quit changing when I hit Edit  -->
-        <q-tree :nodes="groups" node-key="id" :filter="menuFilter">
+        <q-tree :nodes="groups" node-key="id" :filter="groupFilter">
           <template v-slot:default-header="prop">
             <q-icon :name="prop.node.icon" class="q-mr-sm" />
             <div>{{ prop.node.id }}</div>
@@ -43,6 +44,7 @@
           </template>
         </q-tree>
 
+        <!-- Dialog form -->
         <q-dialog
           v-model="editElement"
           @hide="resetEntry"
@@ -125,16 +127,15 @@ export default {
   },
   data() {
     return {
-      menuFilter: "",
+      groupFilter: "",
       entry: {},
-      type: "",
     };
   },
   methods: {
     ...mapActions("admin", ["syncGroups"]),
     resetFilter() {
-      this.menuFilter = "";
-      this.$refs.menuFilter.focus();
+      this.groupFilter = "";
+      this.$refs.groupFilter.focus();
     },
     resetEntry() {
       this.entry = {

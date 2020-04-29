@@ -94,7 +94,6 @@
                     label="Parent"
                   />
 
-                  <!-- TODO: map to actual groups -->
                   <q-select
                     filled
                     dense
@@ -155,13 +154,6 @@ export default {
     }),
     editElement: {
       get: function () {
-        // if (!!this.entry.id) {
-        //   this.syncGroups();
-        //   if (this.entry.id !== "new") {
-        //     this.loadEntry();
-        //   }
-        // }
-        // return !!this.entry.id;
         return this.entry.id !== null;
       },
       set: function () {
@@ -176,6 +168,7 @@ export default {
       await this.syncMenu();
     },
     async loadEntry() {
+      this.syncGroups();
       let results = await this.$actionhero.action("admin:menu:list", {
         id: this.entry.id,
       });
