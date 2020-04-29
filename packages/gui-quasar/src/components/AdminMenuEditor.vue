@@ -28,6 +28,7 @@
             <q-icon :name="prop.node.icon" class="q-mr-sm" />
             <div>{{ prop.node.label }}</div>
             <q-space />
+
             <q-btn
               round
               size="sm"
@@ -37,9 +38,10 @@
           </template>
 
           <!-- TODO: Make this prettier/more useful. Maybe a badge or something instead? -->
-          <template v-slot:default-body="prop">
-            <span>{{ prop.node.groups }}</span>
-          </template>
+          <!--          <template v-slot:default-body="prop">-->
+          <!--            <span>{{ prop.node.groups }}</span>-->
+          <!--            <q-badge :label="(!!prop.node.groups)?prop.node.groups.length:0"/>-->
+          <!--          </template>-->
         </q-tree>
 
         <q-dialog v-model="editElement" @hide="resetEntry">
@@ -53,7 +55,7 @@
                 <div class="q-gutter-md">
                   <q-input filled dense v-model="entry.id" label="id" disable />
 
-                  <q-input filled dense v-model="entry.label" label="Name" />
+                  <q-input filled dense v-model="entry.label" label="Label" />
 
                   <q-input filled dense v-model="entry.icon" label="Icon" />
 
@@ -86,9 +88,15 @@
                   <!-- TODO: map to actual groups -->
                   <q-select
                     filled
+                    dense
                     v-model="entry.groups"
                     multiple
-                    :options="['admin', 'user', 'guest', 'anon']"
+                    :options="groups"
+                    option-label="label"
+                    option-value="id"
+                    emit-value
+                    map-options
+                    options-dense
                     counter
                     label="Groups"
                   />
@@ -128,18 +136,24 @@ export default {
   data() {
     return {
       menuFilter: "",
-      menu: [],
       entry: {},
     };
   },
   computed: {
     ...mapState({
-      gglass: (state) => state.gglass,
+      // admin: (state) => state.admin,
+      // users: (state) => state.admin.users,
+      groups: (state) => state.admin.groups,
+      menu: (state) => state.admin.menu,
     }),
     editElement: {
       get: function () {
-        if (!!this.entry.id && this.entry.id !== "new") {
-          this.loadEntry();
+        if (!!this.entry.id) {
+          if (this.entry.id !== "new") {
+            this.loadEntry();
+          } else {
+            this.syncGroups();
+          }
         }
         return !!this.entry.id;
       },
@@ -149,12 +163,13 @@ export default {
     },
   },
   methods: {
-    ...mapActions("gglass", []),
+    ...mapActions("admin", ["syncUsers", "syncGroups", "syncMenu"]),
     async createEntry() {
       await this.$actionhero.action("admin:menu:upsert", this.entry);
       await this.syncMenu();
     },
     async loadEntry() {
+      await this.syncGroups();
       let results = await this.$actionhero.action("admin:menu:list", {
         id: this.entry.id,
       });
@@ -169,6 +184,13 @@ export default {
         console.log("//TODO: error case");
       }
     },
+    async deleteEntry() {
+      this.$actionhero
+        .action("admin:menu:delete", { id: this.entry.id })
+        .then(() => {
+          this.syncMenu();
+        });
+    },
     resetEntry() {
       this.entry = {
         id: null,
@@ -181,26 +203,16 @@ export default {
         groups: [],
       };
     },
-    async deleteEntry() {
-      this.$actionhero
-        .action("admin:menu:delete", { id: this.entry.id })
-        .then(() => {
-          this.syncMenu();
-        });
-    },
     // q-tree filter reset
     resetFilter() {
       this.menuFilter = "";
       this.$refs.menuFilter.focus();
     },
-    async syncMenu() {
-      let results = await this.$actionhero.action("admin:menu:list", {});
-      this.menu = results.menu;
-    },
   },
   created: function () {
     this.resetEntry();
     // Shift this to only occur when menu executes show
+    this.syncGroups();
     this.syncMenu();
   },
 };
