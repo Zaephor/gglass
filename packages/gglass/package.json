@@ -28,11 +28,11 @@
     "node": ">=8.0.0"
   },
   "dependencies": {
-    "actionhero": "22.0.7",
+    "actionhero": "22.0.8",
     "bcryptjs": "^2.4.3",
     "ioredis": "latest",
     "lowdb": "^1.0.0",
-    "uuid": "^7.0.3",
+    "uuid": "^8.0.0",
     "winston": "latest",
     "ws": "latest"
   },
