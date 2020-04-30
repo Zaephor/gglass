@@ -80,6 +80,19 @@
                     ]"
                   />
 
+                  <q-input
+                    filled
+                    dense
+                    v-model="entry.password"
+                    label="Password"
+                    type="password"
+                    :rules="[
+                      (val) =>
+                        (val && val.length >= 8) ||
+                        'Please use a password longer than 8 characters',
+                    ]"
+                  />
+
                   <q-select
                     filled
                     dense
@@ -98,7 +111,7 @@
               </q-card-section>
 
               <q-card-actions align="right" class="text-primary">
-                <div align="left">
+                <div align="left" v-if="entry.id !== null && entry.id !== ''">
                   <q-btn
                     flat
                     color="red"
@@ -156,6 +169,7 @@ export default {
       this.entry = {
         id: null,
         email: null,
+        password: null,
         groups: [],
       };
     },
@@ -178,7 +192,20 @@ export default {
       }
     },
     async createEntry() {
-      await this.$actionhero.action("admin:user:upsert", this.entry);
+      if (this.entry.id === "") {
+        await this.$actionhero.action("admin:user:insert", {
+          email: this.entry.email,
+          password: this.entry.password,
+          groups: this.entry.groups,
+        });
+      } else {
+        await this.$actionhero.action("admin:user:update", {
+          id: this.entry.id,
+          email: this.entry.email,
+          password: this.entry.password,
+          groups: this.entry.groups,
+        });
+      }
       await this.syncUsers();
     },
     async deleteEntry() {

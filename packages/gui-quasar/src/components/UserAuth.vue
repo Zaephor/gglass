@@ -80,7 +80,7 @@
             @submit="userRegister"
             @reset="register = { email: null, password: null }"
             class="q-gutter-sm"
-            ref="loginForm"
+            ref="registerForm"
           >
             <q-input
               filled
@@ -192,7 +192,7 @@ export default {
       "gglassLogout",
     ]),
     userRegister: async function (event) {
-      let valid = await this.$refs.loginForm.validate();
+      let valid = await this.$refs.registerForm.validate();
       if (valid) {
         await this.gglassRegister({
           email: this.register.email,
@@ -206,14 +206,17 @@ export default {
       }
     },
     userLogin: async function () {
-      await this.gglassLogin({
-        email: this.login.email,
-        password: this.login.password,
-      });
-      if (this.gglass.user !== false) {
-        this.login.email = null;
+      let valid = await this.$refs.loginForm.validate();
+      if (valid) {
+        await this.gglassLogin({
+          email: this.login.email,
+          password: this.login.password,
+        });
+        if (this.gglass.user !== false) {
+          this.login.email = null;
+        }
+        this.login.password = null;
       }
-      this.login.password = null;
     },
   },
   created: function () {
