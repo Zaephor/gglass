@@ -2,7 +2,7 @@ import { Initializer, log, action } from "actionhero";
 import { db } from "../modules/ah-lowdb-plugin";
 import { middleware, model } from "../modules/gglass-user";
 
-export class GglassUserInitializer extends Initializer {
+export class GglassUser extends Initializer {
   constructor() {
     super();
     this.name = "gglass-user";

@@ -1,10 +1,10 @@
 import { Initializer, log } from "actionhero";
 import { db } from "../modules/ah-lowdb-plugin";
 
-export class GglassMenuInitializer extends Initializer {
+export class GglassAdminSettings extends Initializer {
   constructor() {
     super();
-    this.name = "gglass-menu";
+    this.name = "gglass-admin-settings";
     this.loadPriority = 1100;
     this.startPriority = 1100;
     this.stopPriority = 1100;
@@ -12,6 +12,6 @@ export class GglassMenuInitializer extends Initializer {
 
   async initialize() {
     log("[" + this.loadPriority + "] " + this.name + ": Initializing");
-    db.initialize("menu", { entries: [] });
+    db.initialize("settings", { entries: [] });
   }
 }

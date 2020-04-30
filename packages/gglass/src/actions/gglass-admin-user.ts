@@ -1,30 +1,7 @@
 import { Action, api, config } from "actionhero";
-import { v4 as uuidv4 } from "uuid";
-import * as bcrypt from "bcryptjs";
-import { model } from "../modules/gglass-user";
+import { model, gglassUser } from "../modules/gglass-user";
 
 const commandPrefix = "admin:user:";
-const saltRounds = 5;
-const hideAttributes = ["password"];
-
-function omitKeysObject(obj, filter) {
-  filter = !Array.isArray(filter) ? [filter] : filter;
-  return typeof obj !== "object"
-    ? obj
-    : Object.keys(obj).reduce((o, k) => {
-        if (filter.indexOf(k) === -1) {
-          o[k] = obj[k];
-        }
-        return o;
-      }, {});
-}
-
-function omitKeysCollection(collection, filter) {
-  return collection.reduce((acc, cur) => {
-    acc.push(omitKeysObject(cur, filter));
-    return acc;
-  }, []);
-}
 
 export class ListUserAction extends Action {
   constructor() {
@@ -40,32 +17,52 @@ export class ListUserAction extends Action {
   //TODO: Add admin-level validation
 
   async run(data) {
-    await api.lowdb["user"].read(); // Sync DB
     if (!!data.params.id) {
-      data.response.users = [
-        await omitKeysObject(
-          api.lowdb["user"].get("users").find({ id: data.params.id }).value(),
-          hideAttributes
-        ),
-      ];
+      data.response.users = await gglassUser.list(data.params.id);
     } else {
-      data.response.users = await omitKeysCollection(
-        api.lowdb["user"].get("users").value(),
-        hideAttributes
-      );
+      data.response.users = await gglassUser.list();
     }
   }
 }
 
-// TODO: I should really just split this into insert/update... This was originally to save form logic on the frontend...
 export class CreateUserAction extends Action {
   constructor() {
     super();
-    this.name = commandPrefix + "upsert";
+    this.name = commandPrefix + "insert";
     this.description = "Create a new user";
     this.inputs = {
-      id: { required: false },
       email: { required: true },
+      password: { required: true },
+      groups: { required: false },
+    };
+    this.outputExample = {};
+  }
+
+  //TODO: Add admin-level validation
+
+  async run(data) {
+    let { created, user, error } = await gglassUser.create(
+      data.params.email,
+      data.params.password,
+      data.params.groups || []
+    );
+    data.response.created = created;
+    if (created) {
+      data.response.user = user;
+    } else {
+      data.response.error = error;
+    }
+  }
+}
+
+export class UpdateUserAction extends Action {
+  constructor() {
+    super();
+    this.name = commandPrefix + "update";
+    this.description = "Update a users profile";
+    this.inputs = {
+      id: { required: true },
+      email: { required: false },
       password: { required: false },
       groups: { required: false },
     };
@@ -75,38 +72,13 @@ export class CreateUserAction extends Action {
   //TODO: Add admin-level validation
 
   async run(data) {
-    await api.lowdb["user"].read(); // Sync DB
-    if (data.params.id === "") {
-      let userCheck = api.lowdb["user"]
-        .get("users")
-        .find({ email: data.params.email })
-        .value();
-      if (userCheck) {
-        // Email exists
-        data.response.created = false;
-        data.response.error = "Email exists.";
-      } else {
-        // New user
-        let newUser: model.user = {
-          id: uuidv4(),
-          email: data.params.email,
-          password: await bcrypt.hash(data.params.password, saltRounds),
-          groups: [],
-        };
-        if (
-          Array.isArray(data.params.groups) &&
-          data.params.groups.length > 0
-        ) {
-          data.params.groups.forEach((groupId) => {
-            newUser.groups.push(groupId);
-          });
-        }
-        let userCheck = api.lowdb["user"].get("users").push(newUser).write()[0];
-        data.response.created = true;
-        data.response.user = await omitKeysObject(userCheck, hideAttributes);
-      }
-    } else {
-      console.log("EDIT!");
+    let { updated, user } = await gglassUser.update(
+      data.params.id,
+      data.params
+    );
+    data.response.updated = updated;
+    if (updated) {
+      data.response.user = user;
     }
   }
 }
@@ -125,16 +97,7 @@ export class DeleteUserAction extends Action {
   //TODO: Add admin-level validation
 
   async run(data) {
-    data.response.deleted = false;
-    await api.lowdb["user"].read(); // Sync DB
-
-    data.response.entry = await api.lowdb["user"]
-      .get("users")
-      .remove({ id: data.params.id })
-      .write()[0];
-
-    if (!!data.response.entry) {
-      data.response.deleted = true;
-    }
+    let { deleted } = await gglassUser.delete(data.params.id);
+    data.response.deleted = deleted;
   }
 }

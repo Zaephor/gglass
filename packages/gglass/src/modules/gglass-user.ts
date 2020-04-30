@@ -1,7 +1,9 @@
-//TODO: Split ah-lowdb-plugin off as it's own npm module
 import { log, config, api } from "actionhero";
-const FileSync = require("lowdb/adapters/FileSync");
-import { db } from "./ah-lowdb-plugin";
+
+import { v4 as uuidv4 } from "uuid";
+import * as bcrypt from "bcryptjs";
+
+const saltRounds = 5;
 
 export namespace model {
   export interface user {
@@ -10,12 +12,35 @@ export namespace model {
     password: string;
     groups?: string[];
   }
+
   export interface group {
     id: string;
     // label: string;
     icon?: string;
   }
 }
+
+export const util = {
+  // Default attributes to hide
+  hideAttributes: ["password"],
+  omitKeysObject: function (obj, filter): object {
+    filter = !Array.isArray(filter) ? [filter] : filter;
+    return typeof obj !== "object"
+      ? obj
+      : Object.keys(obj).reduce((o, k) => {
+          if (filter.indexOf(k) === -1) {
+            o[k] = obj[k];
+          }
+          return o;
+        }, {});
+  },
+  omitKeysCollection: function (collection, filter): Array<object> {
+    return collection.reduce((acc, cur) => {
+      acc.push(this.omitKeysObject(cur, filter));
+      return acc;
+    }, []);
+  },
+};
 
 export const middleware = {
   "user:inject": {
@@ -31,5 +56,131 @@ export const middleware = {
           .value();
       }
     },
+  },
+};
+
+export const gglassUser = {
+  list: async function (userId?: string): Promise<Array<object>> {
+    await api.lowdb["user"].read(); // Sync DB
+    if (!!userId) {
+      return [
+        await util.omitKeysObject(
+          api.lowdb["user"].get("users").find({ id: userId }).value(),
+          util.hideAttributes
+        ),
+      ];
+    } else {
+      return util.omitKeysCollection(
+        api.lowdb["user"].get("users").value(),
+        util.hideAttributes
+      );
+    }
+  },
+  create: async function (
+    email: string,
+    password: string,
+    groups?: Array<string>
+  ): Promise<{ created: boolean; user?: object; error?: string }> {
+    await api.lowdb["user"].read(); // Sync DB
+    // Find user by email
+    let userCheck = api.lowdb["user"].get("users").find({ email }).value();
+    if (userCheck) {
+      // Email exists
+      return { created: false, error: "Email exists." };
+    } else {
+      // New user
+      let newUser: model.user = {
+        id: uuidv4(),
+        email: email,
+        password: await bcrypt.hash(password, saltRounds),
+        groups: [],
+      };
+
+      // Get count of user
+      let userCount = api.lowdb["user"].get("users").size().value();
+      // Add user to admin group if no users exist
+      if (userCount === 0) {
+        newUser.groups.push("admin");
+      }
+      if (!!groups && Array.isArray(groups) && groups.length > 0) {
+        groups.forEach((groupId) => {
+          newUser.groups.push(groupId);
+        });
+      }
+
+      let userCheck = api.lowdb["user"].get("users").push(newUser).write()[0];
+      if (!!userCheck.id) {
+        return {
+          created: true,
+          user: await util.omitKeysObject(userCheck, util.hideAttributes),
+        };
+      } else {
+        // TODO: Better creation verification that the creation has failed
+        return { created: false };
+      }
+    }
+  },
+  login: async function (
+    email: string,
+    password: string
+  ): Promise<object | boolean> {
+    await api.lowdb["user"].read(); // Sync DB
+    let userCheck = await api.lowdb["user"]
+      .get("users")
+      .find({ email })
+      .value();
+    if (!!userCheck && (await bcrypt.compare(password, userCheck.password))) {
+      return util.omitKeysObject(userCheck, util.hideAttributes);
+    } else {
+      return false;
+    }
+  },
+  update: async function (
+    userId: string,
+    { email = false, password = false, groups = false }
+  ): Promise<{ updated: boolean; user?: object }> {
+    // TODO: Consider any error cases from this workflow, and that the updates were successful
+    await api.lowdb["user"].read(); // Sync DB
+    // Find user by id
+    let userProfile = api.lowdb["user"]
+      .get("users")
+      .find({ id: userId })
+      .value();
+    if (!userProfile) {
+      return { updated: false };
+    } else {
+      let update: any = {};
+      if (email !== false) {
+        update.email = email;
+      }
+      if (groups !== false) {
+        update.groups = groups;
+      }
+      if (password !== false) {
+        update.password = await bcrypt.hash(password, saltRounds);
+      }
+      let result = api.lowdb["user"]
+        .get("users")
+        .find({ id: userId })
+        .assign(update)
+        .value();
+      return {
+        updated: true,
+        user: await util.omitKeysObject(result, util.hideAttributes),
+      };
+    }
+  },
+  delete: async function (userId: string): Promise<{ deleted: boolean }> {
+    await api.lowdb["user"].read(); // Sync DB
+
+    let result = await api.lowdb["user"]
+      .get("users")
+      .remove({ id: userId })
+      .write()[0];
+    if (!!result.entry) {
+      return { deleted: true };
+    } else {
+      return { deleted: false };
+    }
   },
 };

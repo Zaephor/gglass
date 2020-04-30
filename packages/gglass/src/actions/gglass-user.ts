@@ -1,24 +1,8 @@
 import { Action, api, config } from "actionhero";
-import { model } from "../modules/gglass-user";
+import { gglassUser, model } from "../modules/gglass-user";
 import { session } from "../modules/ah-session-plugin";
-import { v4 as uuidv4 } from "uuid";
-import * as bcrypt from "bcryptjs";
 
 const commandPrefix = "user:";
-const saltRounds = 5;
-const hideAttributes = ["password"];
-
-function omitKeysObject(obj, filter) {
-  filter = !Array.isArray(filter) ? [filter] : filter;
-  return typeof obj !== "object"
-    ? obj
-    : Object.keys(obj).reduce((o, k) => {
-        if (filter.indexOf(k) === -1) {
-          o[k] = obj[k];
-        }
-        return o;
-      }, {});
-}
 
 // TODO: Add google auth login flow
 // TODO: Consider other auth login flows
@@ -35,8 +19,7 @@ export class WhoAmIAction extends Action {
 
   async run(data) {
     data.response.session = data.session;
-    data.response.user = await omitKeysObject(data.user, hideAttributes);
-    // data.response.user = data.user;
+    data.response.user = data.user;
   }
 }
 
@@ -52,42 +35,28 @@ export class LoginProfileAction extends Action {
           return param.toString().toLowerCase();
         },
       },
-      password: { required: true }, //TODO: Password validation and hashing
+      password: { required: true },
     };
     this.outputExample = {
-      userId: "31a16712-a33e-464f-a6bb-43cdb87fde32",
+      user: {
+        id: "31a16712-a33e-464f-a6bb-43cdb87fde32",
+        email: "user@email.com",
+        groups: ["user"],
+      },
     };
   }
 
   async run(data) {
-    api.lowdb["user"].read(); // Sync DB
-    // Find user by email
-    let userCheck = await api.lowdb["user"]
-      .get("users")
-      .find({ email: data.params.email })
-      .value();
-    data.response.userId = false; // Predefine as false
-    if (!userCheck) {
-      // No user found
-      data.response.error = "Credentials invalid.";
+    let userProfile = await gglassUser.login(
+      data.params.email,
+      data.params.password
+    );
+    if (!!userProfile) {
+      await session.create(data.connection, userProfile);
+      data.response.user = userProfile;
     } else {
-      // Compare password using bcrypt
-      let validPassword = await bcrypt.compare(
-        data.params.password,
-        userCheck.password
-      );
-      if (!validPassword) {
-        // Password invalid
-        data.response.error = "Credentials invalid.";
-      } else {
-        // Password valid, attach to user session
-        await session.create(
-          data.connection,
-          await omitKeysObject(userCheck, hideAttributes)
-        );
-        // data.response.userId = userCheck.id;
-        data.response.user = await omitKeysObject(userCheck, hideAttributes);
-      }
+      data.response.user = false;
+      data.response.error = "Credentials invalid.";
     }
   }
 }
@@ -117,39 +86,16 @@ export class RegisterProfileAction extends Action {
   }
 
   async run(data) {
-    await api.lowdb["user"].read(); // Sync DB
-    // Find user by email
-    let userCheck = api.lowdb["user"]
-      .get("users")
-      .find({ email: data.params.email })
-      .value();
-    // Get count of user
-    let userCount = api.lowdb["user"].get("users").size().value();
-
-    if (userCheck) {
-      // Email exists
-      data.response.created = false;
-      data.response.error = "Email exists.";
+    let { created, user, error } = await gglassUser.create(
+      data.params.email,
+      data.params.password
+    );
+    data.response.created = created;
+    if (created) {
+      data.response.user = user;
+      await session.create(data.connection, user);
     } else {
-      // New user
-      let newUser: model.user = {
-        id: uuidv4(),
-        email: data.params.email,
-        password: await bcrypt.hash(data.params.password, saltRounds),
-        groups: [],
-      };
-      // Add user to admin group if no users exist
-      if (userCount === 0) {
-        newUser.groups.push("admin");
-      }
-      let userCheck = api.lowdb["user"].get("users").push(newUser).write()[0];
-      data.response.created = true;
-      data.response.user = await omitKeysObject(userCheck, hideAttributes);
-      await session.create(
-        data.connection,
-        await omitKeysObject(userCheck, hideAttributes)
-      );
-      // data.response.userId = userId;
+      data.response.error = error;
     }
   }
 }
