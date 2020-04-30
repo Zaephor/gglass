@@ -163,7 +163,7 @@ export const gglassUser = {
         .get("users")
         .find({ id: userId })
         .assign(update)
-        .value();
+        .write();
       return {
         updated: true,
         user: await util.omitKeysObject(result, util.hideAttributes),
