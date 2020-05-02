@@ -1,9 +1,19 @@
-import { Action, api, config } from "actionhero";
+import { Action, ActionProcessor, api, config } from "actionhero";
 import { model } from "../modules/gglass-user";
 
 const commandPrefix = "admin:settings:";
 
-export class ListGroupAction extends Action {
+// Base action
+abstract class AdminAction extends Action {
+  user_groups = ["admin"];
+
+  run(data: ActionProcessor): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+}
+
+// Settings actions
+export class ListGroupAction extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "list";
@@ -13,7 +23,6 @@ export class ListGroupAction extends Action {
     };
     this.outputExample = {};
   }
-  //TODO: Add admin-level validation
 
   async run(data) {
     await api.lowdb["settings"].read(); // Sync DB

@@ -1,9 +1,19 @@
-import { Action, api, config } from "actionhero";
+import { Action, ActionProcessor, api, config } from "actionhero";
 import { model } from "../modules/gglass-user";
 
 const commandPrefix = "admin:group:";
 
-export class ListGroupAction extends Action {
+// Base action
+abstract class AdminAction extends Action {
+  user_groups = ["admin"];
+
+  run(data: ActionProcessor): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+}
+
+// Group admin actions
+export class ListGroupAction extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "list";
@@ -13,7 +23,6 @@ export class ListGroupAction extends Action {
     };
     this.outputExample = {};
   }
-  //TODO: Add admin-level validation
 
   async run(data) {
     await api.lowdb["user"].read(); // Sync DB
@@ -28,7 +37,7 @@ export class ListGroupAction extends Action {
 }
 
 // TODO: Upsert was because I'm lazy... Should probably split this too
-export class CreateGroupAction extends Action {
+export class CreateGroupAction extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "upsert";
@@ -39,7 +48,6 @@ export class CreateGroupAction extends Action {
     };
     this.outputExample = {};
   }
-  //TODO: Add admin-level validation
   //TODO: Restrict "id" input to alphanum only
   //TODO: Restrict "icon" input to alphanum only
 
@@ -83,7 +91,7 @@ export class CreateGroupAction extends Action {
   }
 }
 
-export class DeleteGroupAction extends Action {
+export class DeleteGroupAction extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "delete";
@@ -93,7 +101,6 @@ export class DeleteGroupAction extends Action {
     };
     this.outputExample = {};
   }
-  //TODO: Add admin-level validation
 
   async run(data) {
     data.response.deleted = false;

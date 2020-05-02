@@ -1,11 +1,20 @@
-import { Action, api } from "actionhero";
+import { Action, ActionProcessor, api } from "actionhero";
 import { model } from "../modules/gglass-menu";
 import { v4 as uuidv4 } from "uuid";
 
-// TODO: Require user is member of admin group for these API calls
 const commandPrefix = "admin:menu:";
 
-export class AdminMenuList extends Action {
+// Base action
+abstract class AdminAction extends Action {
+  user_groups = ["admin"];
+
+  run(data: ActionProcessor): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+}
+
+// Admin Menu actions
+export class AdminMenuList extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "list";
@@ -37,7 +46,6 @@ export class AdminMenuList extends Action {
       ],
     };
   }
-  //TODO: Add admin-level validation
 
   async run(data) {
     await api.lowdb["menu"].read(); // Sync DB
@@ -73,7 +81,7 @@ export class AdminMenuList extends Action {
   }
 }
 
-export class AdminMenuUpsert extends Action {
+export class AdminMenuUpsert extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "upsert";
@@ -90,7 +98,6 @@ export class AdminMenuUpsert extends Action {
     };
     this.outputExample = {};
   }
-  //TODO: Add admin-level validation
 
   // async run(data) {
   async run(data) {
@@ -135,7 +142,7 @@ export class AdminMenuUpsert extends Action {
   }
 }
 
-export class AdminMenuDelete extends Action {
+export class AdminMenuDelete extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "delete";
@@ -145,7 +152,6 @@ export class AdminMenuDelete extends Action {
     };
     this.outputExample = {};
   }
-  //TODO: Add admin-level validation
 
   async run(data) {
     data.response.deleted = false;

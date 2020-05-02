@@ -1,9 +1,19 @@
-import { Action, api, config } from "actionhero";
+import { Action, ActionProcessor, api, config } from "actionhero";
 import { model, gglassUser } from "../modules/gglass-user";
 
 const commandPrefix = "admin:user:";
 
-export class ListUserAction extends Action {
+// Base action
+abstract class AdminAction extends Action {
+  user_groups = ["admin"];
+
+  run(data: ActionProcessor): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+}
+
+// Actions
+export class ListUserAction extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "list";
@@ -14,8 +24,6 @@ export class ListUserAction extends Action {
     this.outputExample = {};
   }
 
-  //TODO: Add admin-level validation
-
   async run(data) {
     if (!!data.params.id) {
       data.response.users = await gglassUser.list(data.params.id);
@@ -25,7 +33,7 @@ export class ListUserAction extends Action {
   }
 }
 
-export class CreateUserAction extends Action {
+export class CreateUserAction extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "insert";
@@ -37,8 +45,6 @@ export class CreateUserAction extends Action {
     };
     this.outputExample = {};
   }
-
-  //TODO: Add admin-level validation
 
   async run(data) {
     let { created, user, error } = await gglassUser.create(
@@ -55,7 +61,7 @@ export class CreateUserAction extends Action {
   }
 }
 
-export class UpdateUserAction extends Action {
+export class UpdateUserAction extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "update";
@@ -69,8 +75,6 @@ export class UpdateUserAction extends Action {
     this.outputExample = {};
   }
 
-  //TODO: Add admin-level validation
-
   async run(data) {
     let { updated, user } = await gglassUser.update(
       data.params.id,
@@ -83,7 +87,7 @@ export class UpdateUserAction extends Action {
   }
 }
 
-export class DeleteUserAction extends Action {
+export class DeleteUserAction extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "delete";
@@ -93,8 +97,6 @@ export class DeleteUserAction extends Action {
     };
     this.outputExample = {};
   }
-
-  //TODO: Add admin-level validation
 
   async run(data) {
     let { deleted } = await gglassUser.delete(data.params.id);
