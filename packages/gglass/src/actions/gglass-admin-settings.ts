@@ -1,5 +1,5 @@
 import { Action, ActionProcessor, api, config } from "actionhero";
-import { model } from "../modules/gglass-user";
+import { gglassSettings } from "../modules/gglass-settings";
 
 const commandPrefix = "admin:settings:";
 
@@ -25,6 +25,10 @@ export class ListGroupAction extends AdminAction {
   }
 
   async run(data) {
-    await api.lowdb["settings"].read(); // Sync DB
+    if (!!data.params.id) {
+      data.response.settings = await gglassSettings.list(data.params.id);
+    } else {
+      data.response.settings = await gglassSettings.list();
+    }
   }
 }
