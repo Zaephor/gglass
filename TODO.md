@@ -14,10 +14,10 @@
 | [packages/gglass/src/actions/gglass-admin-menu.ts](packages/gglass/src/actions/gglass-admin-menu.ts#L93)             |   93   | Add admin-level validation                                                        |
 | [packages/gglass/src/actions/gglass-admin-menu.ts](packages/gglass/src/actions/gglass-admin-menu.ts#L148)            |  148   | Add admin-level validation                                                        |
 | [packages/gglass/src/actions/gglass-admin-settings.ts](packages/gglass/src/actions/gglass-admin-settings.ts#L16)     |   16   | Add admin-level validation                                                        |
-| [packages/gglass/src/actions/gglass-admin-user.ts](packages/gglass/src/actions/gglass-admin-user.ts#L17)             |   17   | Add admin-level validation                                                        |
-| [packages/gglass/src/actions/gglass-admin-user.ts](packages/gglass/src/actions/gglass-admin-user.ts#L41)             |   41   | Add admin-level validation                                                        |
-| [packages/gglass/src/actions/gglass-admin-user.ts](packages/gglass/src/actions/gglass-admin-user.ts#L72)             |   72   | Add admin-level validation                                                        |
-| [packages/gglass/src/actions/gglass-admin-user.ts](packages/gglass/src/actions/gglass-admin-user.ts#L97)             |   97   | Add admin-level validation                                                        |
+| [packages/gglass/src/actions/gglass-admin-user.ts](packages/gglass/src/actions/gglass-admin-user.ts#L31)             |   31   | Add admin-level validation                                                        |
+| [packages/gglass/src/actions/gglass-admin-user.ts](packages/gglass/src/actions/gglass-admin-user.ts#L55)             |   55   | Add admin-level validation                                                        |
+| [packages/gglass/src/actions/gglass-admin-user.ts](packages/gglass/src/actions/gglass-admin-user.ts#L86)             |   86   | Add admin-level validation                                                        |
+| [packages/gglass/src/actions/gglass-admin-user.ts](packages/gglass/src/actions/gglass-admin-user.ts#L111)            |  111   | Add admin-level validation                                                        |
 | [packages/gglass/src/actions/gglass-menu.ts](packages/gglass/src/actions/gglass-menu.ts#L5)                          |   5    | Filter by user's group memberships                                                |
 | [packages/gglass/src/actions/gglass-user.ts](packages/gglass/src/actions/gglass-user.ts#L7)                          |   7    | Add google auth login flow                                                        |
 | [packages/gglass/src/actions/gglass-user.ts](packages/gglass/src/actions/gglass-user.ts#L8)                          |   8    | Consider other auth login flows                                                   |
@@ -29,8 +29,8 @@
 | [packages/gglass/src/initializers/ah-session-plugin.ts](packages/gglass/src/initializers/ah-session-plugin.ts#L1)    |   1    | Split ah-session-plugin off as it's own npm module                                |
 | [packages/gglass/src/modules/ah-lowdb-plugin.ts](packages/gglass/src/modules/ah-lowdb-plugin.ts#L1)                  |   1    | Split ah-lowdb-plugin off as it's own npm module                                  |
 | [packages/gglass/src/modules/ah-session-plugin.ts](packages/gglass/src/modules/ah-session-plugin.ts#L1)              |   1    | Split ah-session-plugin off as it's own npm module                                |
-| [packages/gglass/src/modules/gglass-user.ts](packages/gglass/src/modules/gglass-user.ts#L118)                        |  118   | Better creation verification that the creation has failed                         |
-| [packages/gglass/src/modules/gglass-user.ts](packages/gglass/src/modules/gglass-user.ts#L142)                        |  142   | Consider any error cases from this workflow, and that the updates were successful |
+| [packages/gglass/src/modules/gglass-user.ts](packages/gglass/src/modules/gglass-user.ts#L170)                        |  170   | Better creation verification that the creation has failed                         |
+| [packages/gglass/src/modules/gglass-user.ts](packages/gglass/src/modules/gglass-user.ts#L194)                        |  194   | Consider any error cases from this workflow, and that the updates were successful |
 | [packages/gui-quasar/src/components/AdminGroup.vue](packages/gui-quasar/src/components/AdminGroup.vue#L31)           |   31   | Figure out how the heck to get the accordion to quit changing when I hit Edit     |
 | [packages/gui-quasar/src/components/AdminMenuEditor.vue](packages/gui-quasar/src/components/AdminMenuEditor.vue#L30) |   30   | Figure out how the heck to get the accordion to quit changing when I hit Edit     |
 | [packages/gui-quasar/src/components/AdminMenuEditor.vue](packages/gui-quasar/src/components/AdminMenuEditor.vue#L45) |   45   | Make this prettier/more useful. Maybe a badge or something instead?               |

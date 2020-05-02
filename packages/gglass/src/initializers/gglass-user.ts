@@ -36,5 +36,7 @@ export class GglassUser extends Initializer {
       groups: [adminGroup, userGroup, guestGroup, anonGroup],
     });
     action.addMiddleware(middleware["user:inject"]);
+    action.addMiddleware(middleware["user:logged_in"]);
+    action.addMiddleware(middleware["user:group_check"]);
   }
 }

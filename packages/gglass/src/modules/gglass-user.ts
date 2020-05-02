@@ -5,6 +5,7 @@ import * as bcrypt from "bcryptjs";
 
 const saltRounds = 5;
 
+// gglass user models
 export namespace model {
   export interface user {
     id: string;
@@ -20,6 +21,7 @@ export namespace model {
   }
 }
 
+// gglass user utilities
 export const util = {
   // Default attributes to hide
   hideAttributes: ["password"],
@@ -42,6 +44,7 @@ export const util = {
   },
 };
 
+// gglass user related middleware
 export const middleware = {
   "user:inject": {
     name: "user:inject",
@@ -57,8 +60,57 @@ export const middleware = {
       }
     },
   },
+  "user:logged_in": {
+    name: "user:logged_in",
+    global: true,
+    priority: 1101,
+    preProcessor: async (data) => {
+      // Actions by deafult require you to be logged in, if flag "user_logged_in" is set to false, allow guest use
+      console.log({
+        action_name: data.actionTemplate.name,
+        name: "user:logged_in",
+        action: data.actionTemplate.user_logged_in,
+        user: data.user,
+        guest_rejected: !(data.actionTemplate.user_logged_in === false),
+      });
+      if (
+        data.user === false &&
+        !(data.actionTemplate.user_logged_in === false)
+      ) {
+        throw new Error("Please login.");
+      }
+    },
+  },
+  "user:group_check": {
+    name: "user:group_check",
+    global: true,
+    priority: 1102,
+    preProcessor: async (data) => {
+      console.log({
+        name: "user:group_check",
+        usergroups: data.user.groups,
+        actiongroups: data.actionTemplate.user_groups,
+      });
+      // Checking for hardcoded groups on action(mostly ADMIN)
+      if (!!data.actionTemplate.user_groups) {
+        if (
+          !(
+            !!data.user.groups &&
+            Array.isArray(data.user.groups) &&
+            data.user.groups.length > 0 &&
+            data.actionTemplate.user_groups.some(
+              (x) => data.user.groups.indexOf(x) != -1
+            )
+          )
+        ) {
+          throw new Error("Access denied.");
+        }
+      }
+    },
+  },
 };
 
+// gglass user lib
 export const gglassUser = {
   list: async function (userId?: string): Promise<Array<object>> {
     await api.lowdb["user"].read(); // Sync DB
