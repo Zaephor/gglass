@@ -6,8 +6,10 @@ const commandPrefix = "user:";
 
 // TODO: Add google auth login flow
 // TODO: Consider other auth login flows
+// TODO: Add API to let user delete self
 
 export class WhoAmIAction extends Action {
+  user_logged_in = false;
   constructor() {
     super();
     this.name = commandPrefix + "whoami";
@@ -24,6 +26,7 @@ export class WhoAmIAction extends Action {
 }
 
 export class LoginProfileAction extends Action {
+  user_logged_in = false;
   constructor() {
     super();
     this.name = commandPrefix + "login";
@@ -47,6 +50,9 @@ export class LoginProfileAction extends Action {
   }
 
   async run(data) {
+    if (!!data.session || !!data.user) {
+      throw new Error("Already logged in.");
+    }
     let userProfile = await gglassUser.login(
       data.params.email,
       data.params.password
@@ -62,9 +68,9 @@ export class LoginProfileAction extends Action {
 }
 
 // TODO: Enable/Disable if permitted in configuration
-// TODO: Block logged in users from using this
 // TODO: Always activate if user table is empty
 export class RegisterProfileAction extends Action {
+  user_logged_in = false;
   constructor() {
     super();
     this.name = commandPrefix + "register";
@@ -86,6 +92,9 @@ export class RegisterProfileAction extends Action {
   }
 
   async run(data) {
+    if (!!data.session || !!data.user) {
+      throw new Error("Already logged in.");
+    }
     let { created, user, error } = await gglassUser.create(
       data.params.email,
       data.params.password
