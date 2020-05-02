@@ -66,13 +66,6 @@ export const middleware = {
     priority: 1101,
     preProcessor: async (data) => {
       // Actions by deafult require you to be logged in, if flag "user_logged_in" is set to false, allow guest use
-      console.log({
-        action_name: data.actionTemplate.name,
-        name: "user:logged_in",
-        action: data.actionTemplate.user_logged_in,
-        user: data.user,
-        guest_rejected: !(data.actionTemplate.user_logged_in === false),
-      });
       if (
         data.user === false &&
         !(data.actionTemplate.user_logged_in === false)
@@ -86,11 +79,6 @@ export const middleware = {
     global: true,
     priority: 1102,
     preProcessor: async (data) => {
-      console.log({
-        name: "user:group_check",
-        usergroups: data.user.groups,
-        actiongroups: data.actionTemplate.user_groups,
-      });
       // Checking for hardcoded groups on action(mostly ADMIN)
       if (!!data.actionTemplate.user_groups) {
         if (
@@ -159,8 +147,8 @@ export const gglassUser = {
           newUser.groups.push(groupId);
         });
       }
-
-      let userCheck = api.lowdb["user"].get("users").push(newUser).write()[0];
+      await api.lowdb["user"].get("users").push(newUser).write();
+      let userCheck = api.lowdb["user"].get("users").find({ email }).value();
       if (!!userCheck.id) {
         return {
           created: true,
