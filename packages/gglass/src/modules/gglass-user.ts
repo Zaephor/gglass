@@ -124,7 +124,7 @@ export const gglassUser = {
     await api.lowdb["user"].read(); // Sync DB
     // Find user by email
     let userCheck = api.lowdb["user"].get("users").find({ email }).value();
-    if (userCheck) {
+    if (!!userCheck) {
       // Email exists
       return { created: false, error: "Email exists." };
     } else {
