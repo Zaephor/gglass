@@ -58,6 +58,16 @@
           </q-card-section>
 
           <q-card-actions align="right" class="text-primary">
+            <div align="left">
+              <q-btn
+                flat
+                color="red"
+                label="Delete"
+                @click="deleteUser"
+                v-close-popup
+              />
+            </div>
+            <q-space />
             <div align="right">
               <q-btn flat type="submit" label="Save" v-close-popup />
               <q-btn flat label="Cancel" v-close-popup />
@@ -112,6 +122,12 @@ export default {
         }
       });
       await this.$actionhero.action("admin:user:update", updateData);
+      this.syncUsers();
+    },
+    async deleteUser() {
+      await this.$actionhero.action("admin:user:delete", {
+        id: this.element.id,
+      });
       this.syncUsers();
     },
   },
