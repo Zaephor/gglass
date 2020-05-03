@@ -27,6 +27,7 @@ export async function gglassWhoami({ commit }) {
     // commit('updateProfile', { email: result.user.email, id: result.user.id })
     commit("updateProfile", result.user);
   } else {
+    commit("clearProfile");
     //TODO: Error popup, clear local cookies/sessions
     //if (result.error){} // TODO: If we got an error, display it
   }

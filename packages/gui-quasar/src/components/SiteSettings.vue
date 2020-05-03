@@ -1,8 +1,17 @@
 <template>
-  <q-expansion-item expand-separator icon="settings" label="Site Settings">
+  <q-expansion-item
+    expand-separator
+    icon="settings"
+    label="Site Settings"
+    @before-show="syncSettings"
+  >
     <q-card>
       <q-card-section>
-        TODO
+        <q-list>
+          <template v-for="(element, idx) in settings">
+            <settings-element :key="idx" :element="element" />
+          </template>
+        </q-list>
       </q-card-section>
     </q-card>
   </q-expansion-item>
@@ -10,19 +19,21 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import SettingsElement from "components/SettingsElement";
 
 export default {
   name: "SiteSettings",
+  components: { SettingsElement },
   computed: {
     ...mapState({
-      gglass: (state) => state.gglass,
+      settings: (state) => state.admin.settings,
     }),
   },
   data() {
     return {};
   },
   methods: {
-    ...mapActions("gglass", []),
+    ...mapActions("admin", ["syncSettings"]),
   },
   created: function () {},
 };

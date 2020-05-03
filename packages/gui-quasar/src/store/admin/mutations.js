@@ -9,3 +9,7 @@ export function syncGroups(state, data) {
 export function syncMenu(state, data) {
   state.menu = data;
 }
+
+export function syncSettings(state, data) {
+  state.settings = data;
+}

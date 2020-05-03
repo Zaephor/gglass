@@ -3,5 +3,6 @@ export default function () {
     users: [],
     groups: [],
     menu: [],
+    settings: [],
   };
 }
