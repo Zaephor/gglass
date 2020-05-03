@@ -23,7 +23,7 @@
             />
           </template>
           <template v-slot:after>
-            <q-btn round size="sm" icon="add" @click="entry.id = ''" />
+            <q-btn round size="sm" icon="add" @click="editing = true" />
           </template>
         </q-input>
 
@@ -34,47 +34,29 @@
             <div>{{ prop.node.label }}</div>
             <q-space />
 
-            <q-btn
-              round
-              size="sm"
-              icon="settings"
-              @click="entry.id = prop.node.id"
-            />
+            <admin-menu-editor-element :element="prop.node" />
           </template>
-
-          <!-- TODO: Make this prettier/more useful. Maybe a badge or something instead? -->
-          <!--          <template v-slot:default-body="prop">-->
-          <!--            <span>{{ prop.node.groups }}</span>-->
-          <!--            <q-badge :label="(!!prop.node.groups)?prop.node.groups.length:0"/>-->
-          <!--          </template>-->
         </q-tree>
 
-        <q-dialog
-          v-model="editElement"
-          @hide="resetEntry"
-          @before-show="loadEntry"
-        >
+        <!-- New entry dialog -->
+        <q-dialog v-model="editing" @before-show="loadEntry">
           <q-card style="width: 700px; max-width: 80vw;" class="q-pt-none">
-            <q-form @submit="createEntry" @reset="resetEntry">
+            <q-form @submit="createEntry">
               <q-card-section>
-                <div class="text-h6">Add/Edit</div>
+                <div class="text-h6">New Menu Entry</div>
               </q-card-section>
 
               <q-card-section class="q-pt-none">
                 <div class="q-gutter-md">
-                  <q-input filled dense v-model="entry.id" label="id" disable />
-
-                  <q-input filled dense v-model="entry.label" label="Label" />
-
-                  <q-input filled dense v-model="entry.icon" label="Icon" />
-
-                  <q-input filled dense v-model="entry.url" label="URL" />
+                  <q-input filled dense v-model="create.label" label="Label" />
+                  <q-input filled dense v-model="create.icon" label="Icon" />
+                  <q-input filled dense v-model="create.url" label="URL" />
 
                   <q-select
                     clearable
                     filled
                     dense
-                    v-model="entry.target"
+                    v-model="create.target"
                     :options="['_blank']"
                     map-options
                     options-dense
@@ -85,7 +67,7 @@
                     clearable
                     filled
                     dense
-                    v-model="entry.parent"
+                    v-model="create.parent"
                     :options="menu"
                     option-value="id"
                     emit-value
@@ -97,10 +79,10 @@
                   <q-select
                     filled
                     dense
-                    v-model="entry.groups"
+                    v-model="create.groups"
                     multiple
                     :options="groups"
-                    option-label="label"
+                    option-label="id"
                     option-value="id"
                     emit-value
                     map-options
@@ -112,16 +94,6 @@
               </q-card-section>
 
               <q-card-actions align="right" class="text-primary">
-                <div align="left" v-if="entry.id !== 'new'">
-                  <q-btn
-                    flat
-                    color="red"
-                    label="Delete"
-                    @click="deleteEntry"
-                    v-close-popup
-                  />
-                </div>
-                <q-space />
                 <div align="right">
                   <q-btn flat type="submit" label="Save" v-close-popup />
                   <q-btn flat label="Cancel" v-close-popup />
@@ -137,14 +109,18 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import AdminMenuEditorElement from "components/AdminMenuEditorElement";
 
 export default {
   name: "MenuEditor",
-  components: {},
+  components: {
+    AdminMenuEditorElement,
+  },
   data() {
     return {
       menuFilter: "",
-      entry: {},
+      editing: false,
+      create: {},
     };
   },
   computed: {
@@ -152,36 +128,23 @@ export default {
       groups: (state) => state.admin.groups,
       menu: (state) => state.admin.menu,
     }),
-    editElement: {
-      get: function () {
-        return this.entry.id !== null;
-      },
-      set: function () {
-        this.entry.id = null;
-      },
-    },
   },
   methods: {
     ...mapActions("admin", ["syncUsers", "syncGroups", "syncMenu"]),
     async createEntry() {
-      await this.$actionhero.action("admin:menu:upsert", this.entry);
+      let createData = {};
+      Object.keys(this.create).forEach((k) => {
+        if (this.create[k] !== null) {
+          createData[k] = this.create[k];
+        }
+      });
+      await this.$actionhero.action("admin:menu:create", createData);
       await this.syncMenu();
     },
     async loadEntry() {
+      this.resetEntry();
+      this.syncMenu();
       this.syncGroups();
-      let results = await this.$actionhero.action("admin:menu:list", {
-        id: this.entry.id,
-      });
-      if (results.menu && results.menu.length === 1) {
-        Object.keys(this.entry).forEach((attr) => {
-          if (results.menu[0][attr]) {
-            this.entry[attr] = results.menu[0][attr];
-          }
-        });
-      } else {
-        //TODO: error case
-        console.log("//TODO: error case");
-      }
     },
     async deleteEntry() {
       this.$actionhero
@@ -191,14 +154,14 @@ export default {
         });
     },
     resetEntry() {
-      this.entry = {
+      this.create = {
         id: null,
         label: null,
         order: null,
         icon: null,
         url: null,
         target: null,
-        parent: null,
+        parent: "",
         groups: [],
       };
     },
