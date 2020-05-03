@@ -10,6 +10,7 @@ const maxMemoryAlloted = process.env.maxMemoryAlloted || 500;
 const maxResqueQueueLength = process.env.maxResqueQueueLength || 1000;
 
 module.exports = class Status extends Action {
+  user_logged_in = false;
   constructor() {
     super();
     this.name = "status";
