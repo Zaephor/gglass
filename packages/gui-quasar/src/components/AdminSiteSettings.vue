@@ -9,7 +9,7 @@
       <q-card-section>
         <q-list>
           <template v-for="(element, idx) in settings">
-            <settings-element :key="idx" :element="element" />
+            <admin-site-settings-element :key="idx" :element="element" />
           </template>
         </q-list>
       </q-card-section>
@@ -19,11 +19,11 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import SettingsElement from "components/SettingsElement";
+import AdminSiteSettingsElement from "components/AdminSiteSettingsElement";
 
 export default {
   name: "SiteSettings",
-  components: { SettingsElement },
+  components: { AdminSiteSettingsElement },
   computed: {
     ...mapState({
       settings: (state) => state.admin.settings,

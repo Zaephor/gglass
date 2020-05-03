@@ -59,7 +59,7 @@
 import { mapActions } from "vuex";
 
 export default {
-  name: "SettingsElement",
+  name: "AdminSiteSettingsElement",
   props: ["element"],
   components: {},
   data() {

@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: Cut out the create dialog from here, finish tinkering with AdminUserElement -->
   <q-expansion-item
     expand-separator
     icon="person"
@@ -35,12 +36,7 @@
             <div>{{ prop.node.email }}</div>
             <q-space />
 
-            <q-btn
-              round
-              size="sm"
-              icon="settings"
-              @click="entry.id = prop.node.id"
-            />
+            <admin-user-element :element="prop.node" />
           </template>
         </q-tree>
 
@@ -136,9 +132,11 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import AdminUserElement from "components/AdminUserElement";
 
 export default {
   name: "AdminUser",
+  components: { AdminUserElement },
   computed: {
     ...mapState({
       users: (state) => state.admin.users,

@@ -39,7 +39,7 @@
             <admin-group />
             <q-separator />
             <admin-menu-editor />
-            <site-settings />
+            <admin-site-settings />
           </template>
         </q-list>
       </q-tab-panel>
@@ -54,7 +54,7 @@ import UserAuth from "components/UserAuth";
 import AdminUser from "components/AdminUser";
 import AdminGroup from "components/AdminGroup";
 import AdminMenuEditor from "components/AdminMenuEditor";
-import SiteSettings from "components/SiteSettings";
+import AdminSiteSettings from "components/AdminSiteSettings";
 
 export default {
   components: {
@@ -63,7 +63,7 @@ export default {
     AdminUser,
     AdminGroup,
     AdminMenuEditor,
-    SiteSettings,
+    AdminSiteSettings,
   },
   computed: {
     ...mapState({
