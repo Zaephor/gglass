@@ -29,11 +29,11 @@
   "dependencies": {
     "@quasar/extras": "^1.7.0",
     "axios": "^0.19.2",
-    "quasar": "^1.10.0",
+    "quasar": "^1.10.3",
     "vue-i18n": "^8.17.4"
   },
   "devDependencies": {
-    "@quasar/app": "^1.8.3",
+    "@quasar/app": "^1.8.4",
     "@quasar/quasar-app-extension-testing": "^1.0.0",
     "@quasar/quasar-app-extension-testing-unit-jest": "^1.0.0",
     "babel-eslint": "^10.1.0",
