@@ -52,13 +52,12 @@ export class AdminMenuList extends AdminAction {
   }
 }
 
-export class AdminMenuUpsert extends AdminAction {
+export class AdminMenuCreate extends AdminAction {
   constructor() {
     super();
-    this.name = commandPrefix + "upsert";
-    this.description = "Create/update nav item";
+    this.name = commandPrefix + "create";
+    this.description = "create a menu item";
     this.inputs = {
-      id: { required: false },
       label: { required: true },
       order: { required: false },
       icon: { required: false },
@@ -70,45 +69,52 @@ export class AdminMenuUpsert extends AdminAction {
     this.outputExample = {};
   }
 
-  // async run(data) {
   async run(data) {
-    await api.lowdb["menu"].read(); // Sync DB
+    let { created, entry } = await gglassMenu.create(
+      data.params.label,
+      data.params.order || undefined,
+      data.params.icon || undefined,
+      data.params.url || undefined,
+      data.params.target || undefined,
+      data.params.parent || undefined,
+      data.params.groups || undefined
+    );
+    data.response.created = created;
+    if (created) {
+      data.response.entry = entry;
+    }
+  }
+}
 
-    let newEntry: model.entry = {
-      id:
-        !!data.params.id && data.params.id !== "new" && data.params.id !== ""
-          ? data.params.id
-          : uuidv4(),
-      label: data.params.label,
+export class AdminMenuUpdate extends AdminAction {
+  constructor() {
+    super();
+    this.name = commandPrefix + "update";
+    this.description = "Update a menu item";
+    this.inputs = {
+      id: { required: true },
+      label: { required: false },
+      order: { required: false },
+      icon: { required: false },
+      url: { required: false },
+      target: { required: false },
+      parent: { required: false },
+      groups: { required: false },
     };
+    this.outputExample = {};
+  }
 
+  async run(data) {
+    let payload = {};
     Object.keys(this.inputs).forEach((attr) => {
-      if (attr !== "id" && attr !== "label" && !!data.params[attr]) {
-        newEntry[attr] = data.params[attr];
+      if (attr !== "id" && data.params[attr] !== undefined) {
+        payload[attr] = data.params[attr];
       }
     });
-
-    if (newEntry.id === newEntry.parent) {
-      delete newEntry.parent;
-    }
-
-    // Can't seem to see a way to replace an object in a lowdb collection. Update=delete+insert, new=insert
-    if (data.params.id !== "new") {
-      await api.lowdb["menu"]
-        .get("entries")
-        .remove({ id: data.params.id })
-        .write()[0];
-    }
-    data.response.entry = await api.lowdb["menu"]
-      .get("entries")
-      .push(newEntry)
-      .write()[0];
-    if (!!data.response.entry) {
-      if (data.params.id !== "new") {
-        data.response.updated = true;
-      } else {
-        data.response.created = true;
-      }
+    let { updated, entry } = await gglassMenu.update(data.params.id, payload);
+    data.response.updated = updated;
+    if (updated) {
+      data.response.entry = entry;
     }
   }
 }
@@ -128,12 +134,7 @@ export class AdminMenuDelete extends AdminAction {
     data.response.deleted = false;
     await api.lowdb["menu"].read(); // Sync DB
 
-    data.response.entry = await api.lowdb["menu"]
-      .get("entries")
-      .remove({ id: data.params.id })
-      .write()[0];
-    if (!!data.response.entry) {
-      data.response.deleted = true;
-    }
+    let { deleted } = await gglassMenu.delete(data.params.id);
+    data.response.deleted = deleted;
   }
 }

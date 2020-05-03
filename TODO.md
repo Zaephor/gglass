@@ -17,8 +17,9 @@
 | [packages/gglass/src/initializers/gglass-settings.ts](packages/gglass/src/initializers/gglass-settings.ts#L64)       |   64   | Proper error checking in this section                                             |
 | [packages/gglass/src/modules/ah-lowdb-plugin.ts](packages/gglass/src/modules/ah-lowdb-plugin.ts#L1)                  |   1    | Split ah-lowdb-plugin off as it's own npm module                                  |
 | [packages/gglass/src/modules/ah-session-plugin.ts](packages/gglass/src/modules/ah-session-plugin.ts#L1)              |   1    | Split ah-session-plugin off as it's own npm module                                |
-| [packages/gglass/src/modules/gglass-menu.ts](packages/gglass/src/modules/gglass-menu.ts#L16)                         |   16   | Shift the rest of the CRUD here from gglass-admin-menu                            |
-| [packages/gglass/src/modules/gglass-menu.ts](packages/gglass/src/modules/gglass-menu.ts#L104)                        |  104   | update function doesn't enforce model.entry interface                             |
+| [packages/gglass/src/modules/gglass-menu.ts](packages/gglass/src/modules/gglass-menu.ts#L18)                         |   18   | Shift the rest of the CRUD here from gglass-admin-menu                            |
+| [packages/gglass/src/modules/gglass-menu.ts](packages/gglass/src/modules/gglass-menu.ts#L134)                        |  134   | Better creation verification that the creation has failed                         |
+| [packages/gglass/src/modules/gglass-menu.ts](packages/gglass/src/modules/gglass-menu.ts#L138)                        |  138   | update function doesn't enforce model.entry interface                             |
 | [packages/gglass/src/modules/gglass-settings.ts](packages/gglass/src/modules/gglass-settings.ts#L37)                 |   37   | Think about how to best handle hiding sensitive information                       |
 | [packages/gglass/src/modules/gglass-settings.ts](packages/gglass/src/modules/gglass-settings.ts#L102)                |  102   | Better creation verification that the creation has failed                         |
 | [packages/gglass/src/modules/gglass-settings.ts](packages/gglass/src/modules/gglass-settings.ts#L144)                |  144   | Better creation verification that the update has failed                           |
@@ -28,7 +29,6 @@
 | [packages/gglass/src/modules/gglass-user.ts](packages/gglass/src/modules/gglass-user.ts#L187)                        |  187   | Consider any error cases from this workflow, and that the updates were successful |
 | [packages/gui-quasar/src/components/AdminGroup.vue](packages/gui-quasar/src/components/AdminGroup.vue#L31)           |   31   | Figure out how the heck to get the accordion to quit changing when I hit Edit     |
 | [packages/gui-quasar/src/components/AdminMenuEditor.vue](packages/gui-quasar/src/components/AdminMenuEditor.vue#L30) |   30   | Figure out how the heck to get the accordion to quit changing when I hit Edit     |
-| [packages/gui-quasar/src/components/AdminMenuEditor.vue](packages/gui-quasar/src/components/AdminMenuEditor.vue#L46) |   46   | Make this prettier/more useful. Maybe a badge or something instead?               |
 | [packages/gui-quasar/src/components/AdminUser.vue](packages/gui-quasar/src/components/AdminUser.vue#L2)              |   2    | Cut out the create dialog from here, finish tinkering with AdminUserElement       |
 | [packages/gui-quasar/src/components/AdminUser.vue](packages/gui-quasar/src/components/AdminUser.vue#L32)             |   32   | Figure out how the heck to get the accordion to quit changing when I hit Edit     |
 | [packages/gui-quasar/src/components/UserAuth.vue](packages/gui-quasar/src/components/UserAuth.vue#L146)              |  146   | Put in a proper Google icon here                                                  |

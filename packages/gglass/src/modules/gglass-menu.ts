@@ -1,4 +1,6 @@
 import { api } from "actionhero";
+import { v4 as uuidv4 } from "uuid";
+import { util } from "./gglass-user";
 
 export namespace model {
   export interface entry {
@@ -97,5 +99,75 @@ export const gglassMenu = {
       let noParents = !ele.parent;
       return noParents && (noGroups || emptyGroups || matchGroups);
     });
+  },
+  create: async function (
+    label: string,
+    order?: number,
+    icon?: string,
+    url?: string,
+    target?: string,
+    parent?: string,
+    groups?: Array<string>
+  ): Promise<{ created: boolean; entry?: object; error?: string }> {
+    await api.lowdb["menu"].read(); // Sync DB
+    let newEntry: model.entry = {
+      id: uuidv4(),
+      label,
+      order,
+      icon,
+      url,
+      target,
+      parent,
+      groups,
+    };
+    await api.lowdb["menu"].get("entries").push(newEntry).write();
+    let entryCheck = api.lowdb["menu"]
+      .get("entries")
+      .find({ id: newEntry.id })
+      .value();
+    if (!!entryCheck.id) {
+      return {
+        created: true,
+        entry: entryCheck,
+      };
+    } else {
+      // TODO: Better creation verification that the creation has failed
+      return { created: false };
+    }
+  },
+  // TODO: update function doesn't enforce model.entry interface
+  update: async function (
+    id: string,
+    payload: object
+  ): Promise<{ updated: boolean; entry?: object; error?: string }> {
+    await api.lowdb["menu"].read(); // Sync DB
+    let menuEntry = api.lowdb["menu"].get("entries").find({ id }).value();
+    if (!menuEntry) {
+      return { updated: false, error: "Entry not found" };
+    } else {
+      // Assign only replaces declared values and ignores un-updated.
+      // Follow delete+recreate approach instead
+      await api.lowdb["menu"].get("entries").remove({ id }).write();
+      let result = await api.lowdb["menu"]
+        .get("entries")
+        .push({ id, ...payload })
+        .write();
+      return {
+        updated: true,
+        entry: result,
+      };
+    }
+  },
+  delete: async function (id: string): Promise<{ deleted: boolean }> {
+    await api.lowdb["menu"].read(); // Sync DB
+    let result = await api.lowdb["menu"]
+      .get("entries")
+      .remove({ id })
+      .write()[0];
+    if (!!result.entry) {
+      return { deleted: true };
+    } else {
+      return { deleted: false };
+    }
   },
 };
