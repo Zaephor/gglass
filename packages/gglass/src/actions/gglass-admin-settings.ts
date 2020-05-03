@@ -13,11 +13,11 @@ abstract class AdminAction extends Action {
 }
 
 // Settings actions
-export class ListGroupAction extends AdminAction {
+export class ListSettings extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "list";
-    this.description = "Lists all groups";
+    this.description = "Lists all settings";
     this.inputs = {
       id: { required: false },
     };
@@ -30,5 +30,40 @@ export class ListGroupAction extends AdminAction {
     } else {
       data.response.settings = await gglassSettings.list();
     }
+  }
+}
+
+export class UpdateSetting extends AdminAction {
+  constructor() {
+    super();
+    this.name = commandPrefix + "update";
+    this.description = "Update a site setting";
+    this.inputs = {
+      id: { required: true },
+      value: { required: true },
+    };
+    this.outputExample = {};
+  }
+
+  async run(data) {
+    let result = await gglassSettings.update(data.params.id, data.params.value);
+    data.response.updated = result.updated;
+  }
+}
+
+export class ResetSetting extends AdminAction {
+  constructor() {
+    super();
+    this.name = commandPrefix + "reset";
+    this.description = "Set a configuration setting back to default";
+    this.inputs = {
+      id: { required: true },
+    };
+    this.outputExample = {};
+  }
+
+  async run(data) {
+    let result = await gglassSettings.reset(data.params.id);
+    data.response.reset = result.reset;
   }
 }

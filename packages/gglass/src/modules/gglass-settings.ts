@@ -3,16 +3,45 @@ import { api } from "actionhero";
 export namespace model {
   export interface config {
     id: string;
+    group?: string;
     type: string;
     value?: any;
     default_value?: any;
+    order?: number;
   }
 }
+
+export const util = {
+  omitValueIfPassword: function (collection) {
+    let weirdFilter = function (obj) {
+      return typeof obj !== "object"
+        ? obj
+        : Object.keys(obj).reduce((o, k) => {
+            if (!(k === "value" && obj["type"] === "password")) {
+              o[k] = obj[k];
+            }
+            return o;
+          }, {});
+    };
+
+    return collection.reduce((acc, cur) => {
+      acc.push(weirdFilter(cur));
+      return acc;
+    }, []);
+  },
+};
 
 export const gglassSettings = {
   list: async function (settingId?: string): Promise<Array<object>> {
     await api.lowdb["settings"].read(); // Sync DB
+    // TODO: Think about how to best handle hiding sensitive information
     if (!!settingId) {
+      // return util.omitValueIfPassword([
+      //     await api.lowdb["settings"]
+      //         .get("entries")
+      //         .find({id: settingId})
+      //         .value(),
+      // ]);
       return [
         await api.lowdb["settings"]
           .get("entries")
@@ -20,14 +49,20 @@ export const gglassSettings = {
           .value(),
       ];
     } else {
-      return api.lowdb["settings"].get("entries").value();
+      // return util.omitValueIfPassword(api.lowdb["settings"].get("entries").sortBy(['group', 'order', 'id']).value());
+      return api.lowdb["settings"]
+        .get("entries")
+        .sortBy(["group", "order", "id"])
+        .value();
     }
   },
   create: async function (
     id: string,
     type: string,
     value?: any,
-    default_value?: any
+    default_value?: any,
+    group?: string,
+    order?: number
   ): Promise<{ created: boolean; setting?: object; error?: string }> {
     await api.lowdb["settings"].read(); // Sync DB
     let entryCheck = api.lowdb["settings"].get("entries").find({ id }).value();
@@ -46,6 +81,12 @@ export const gglassSettings = {
       }
       if (default_value !== undefined) {
         newEntry.default_value = default_value;
+      }
+      if (group !== undefined) {
+        newEntry.group = group;
+      }
+      if (order !== undefined) {
+        newEntry.order = order;
       }
       await api.lowdb["settings"].get("entries").push(newEntry).write();
       let entryCheck = api.lowdb["settings"]
@@ -66,7 +107,9 @@ export const gglassSettings = {
   update: async function (
     id: string,
     value?: any,
-    default_value?: any
+    default_value?: any,
+    group?: string,
+    order?: number
   ): Promise<{ updated: boolean; setting?: object; error?: string }> {
     await api.lowdb["settings"].read(); // Sync DB
     let entryCheck = api.lowdb["settings"].get("entries").find({ id }).value();
@@ -79,6 +122,12 @@ export const gglassSettings = {
       }
       if (default_value !== undefined) {
         updateEntry.default_value = default_value;
+      }
+      if (group !== undefined) {
+        updateEntry.group = group;
+      }
+      if (order !== undefined) {
+        updateEntry.order = order;
       }
       let result = api.lowdb["settings"]
         .get("entries")
@@ -104,7 +153,7 @@ export const gglassSettings = {
     let entryCheck = api.lowdb["settings"].get("entries").find({ id }).value();
     if (!entryCheck) {
       return { reset: false, error: "Setting ID does not exist." };
-    } else if (!!entryCheck && !entryCheck.default_value) {
+    } else if (!!entryCheck && entryCheck.default_value === undefined) {
       return { reset: false, error: "No default defined for this setting." };
     } else {
       let result = api.lowdb["settings"]
