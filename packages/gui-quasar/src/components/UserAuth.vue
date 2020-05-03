@@ -6,7 +6,8 @@
       expand-separator
       icon="lock"
       label="Login"
-      v-if="gglass.user === false"
+      v-if="gglass.user === false && enabled.login"
+      @before-show="syncEnabled"
     >
       <q-card>
         <q-card-section>
@@ -72,7 +73,8 @@
       expand-separator
       icon="create"
       label="Register"
-      v-if="gglass.user === false"
+      v-if="gglass.user === false && enabled.register"
+      @before-show="syncEnabled"
     >
       <q-card>
         <q-card-section>
@@ -133,6 +135,26 @@
       </q-card>
     </q-expansion-item>
 
+    <!-- Gauth Button -->
+    <q-item
+      clickable
+      v-ripple
+      v-if="gglass.user === false && enabled.gauth_login"
+    >
+      <q-item-section avatar>
+        <!--        <q-avatar icon="lock" />-->
+        <!-- TODO: Put in a proper Google icon here -->
+      </q-item-section>
+
+      <q-item-section>
+        <q-item-label>Google</q-item-label>
+      </q-item-section>
+
+      <q-item-section side>
+        <q-icon name="lock" />
+      </q-item-section>
+    </q-item>
+
     <!--  User Profile/etc section  -->
     <template v-if="gglass.user !== false">
       <q-expansion-item
@@ -181,6 +203,12 @@ export default {
         email: null,
         password: null,
       },
+      enabled: {
+        login: false,
+        register: false,
+        gauth_login: false,
+        gauth_register: false,
+      },
     };
   },
   methods: {
@@ -218,9 +246,16 @@ export default {
         this.login.password = null;
       }
     },
+    syncEnabled: async function () {
+      let result = await this.$actionhero.action("user:enabled", {});
+      Object.keys(this.enabled).forEach((k) => {
+        this.enabled[k] = result[k];
+      });
+    },
   },
   created: function () {
     this.gglassWhoami();
+    this.syncEnabled();
   },
 };
 </script>

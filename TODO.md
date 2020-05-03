@@ -28,7 +28,7 @@
 | [packages/gui-quasar/src/components/AdminMenuEditor.vue](packages/gui-quasar/src/components/AdminMenuEditor.vue#L30) |   30   | Figure out how the heck to get the accordion to quit changing when I hit Edit     |
 | [packages/gui-quasar/src/components/AdminMenuEditor.vue](packages/gui-quasar/src/components/AdminMenuEditor.vue#L45) |   45   | Make this prettier/more useful. Maybe a badge or something instead?               |
 | [packages/gui-quasar/src/components/AdminUser.vue](packages/gui-quasar/src/components/AdminUser.vue#L31)             |   31   | Figure out how the heck to get the accordion to quit changing when I hit Edit     |
-| [packages/gui-quasar/src/components/UserAuth.vue](packages/gui-quasar/src/components/UserAuth.vue#L144)              |  144   | Put in a proper Google icon here                                                  |
+| [packages/gui-quasar/src/components/UserAuth.vue](packages/gui-quasar/src/components/UserAuth.vue#L146)              |  146   | Put in a proper Google icon here                                                  |
 | [packages/gui-quasar/src/store/gglass/actions.js](packages/gui-quasar/src/store/gglass/actions.js#L31)               |   31   | Error popup, clear local cookies/sessions                                         |
 | [packages/gui-quasar/src/store/gglass/actions.js](packages/gui-quasar/src/store/gglass/actions.js#L43)               |   43   | Error popup                                                                       |
 | [packages/gui-quasar/src/store/gglass/actions.js](packages/gui-quasar/src/store/gglass/actions.js#L54)               |   54   | Error popup                                                                       |
