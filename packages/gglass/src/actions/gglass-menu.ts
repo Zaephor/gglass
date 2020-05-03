@@ -1,8 +1,7 @@
 import { Action, api } from "actionhero";
+import { gglassMenu } from "../modules/gglass-menu";
 
 const commandPrefix = "menu:";
-
-// TODO: Filter by user's group memberships
 
 export class MenuList extends Action {
   constructor() {
@@ -38,36 +37,6 @@ export class MenuList extends Action {
   }
 
   async run(data) {
-    await api.lowdb["menu"].read(); // Sync DB
-    data.response.menu = [];
-    if (!!data.params.id) {
-      data.response.menu = [
-        api.lowdb["menu"].get("entries").find({ id: data.params.id }).value(),
-      ];
-    } else {
-      let menuEntries = api.lowdb["menu"]
-        .get("entries")
-        .orderBy(["parent", "order", "label"], ["desc", "asc", "asc"])
-        .value();
-      menuEntries.forEach((ele) => {
-        // Add element
-        let parentIdx = null;
-        if (!!ele.parent) {
-          parentIdx = api.lowdb["menu"]._.findIndex(data.response.menu, {
-            id: ele.parent,
-          });
-        }
-        if (!ele.parent || parentIdx === -1 || parentIdx === null) {
-          data.response.menu.push(ele);
-        } else {
-          if (!data.response.menu[parentIdx].children) {
-            data.response.menu[parentIdx].children = [];
-          }
-          if (!!data.response.menu[parentIdx].children) {
-            data.response.menu[parentIdx].children.push(ele);
-          }
-        }
-      });
-    }
+    data.response.menu = await gglassMenu.listFiltered(data.user.groups);
   }
 }

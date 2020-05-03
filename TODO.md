@@ -6,7 +6,6 @@
 | [packages/gglass/src/actions/gglass-admin-group.ts](packages/gglass/src/actions/gglass-admin-group.ts#L51)           |   51   | Restrict "id" input to alphanum only                                              |
 | [packages/gglass/src/actions/gglass-admin-group.ts](packages/gglass/src/actions/gglass-admin-group.ts#L52)           |   52   | Restrict "icon" input to alphanum only                                            |
 | [packages/gglass/src/actions/gglass-admin-group.ts](packages/gglass/src/actions/gglass-admin-group.ts#L115)          |  115   | Also remove group from all afflicted users                                        |
-| [packages/gglass/src/actions/gglass-menu.ts](packages/gglass/src/actions/gglass-menu.ts#L5)                          |   5    | Filter by user's group memberships                                                |
 | [packages/gglass/src/actions/gglass-user.ts](packages/gglass/src/actions/gglass-user.ts#L8)                          |   8    | Add google auth login flow                                                        |
 | [packages/gglass/src/actions/gglass-user.ts](packages/gglass/src/actions/gglass-user.ts#L9)                          |   9    | Consider other auth login flows                                                   |
 | [packages/gglass/src/actions/gglass-user.ts](packages/gglass/src/actions/gglass-user.ts#L10)                         |   10   | Add API to let user delete self                                                   |
@@ -18,6 +17,7 @@
 | [packages/gglass/src/initializers/gglass-settings.ts](packages/gglass/src/initializers/gglass-settings.ts#L64)       |   64   | Proper error checking in this section                                             |
 | [packages/gglass/src/modules/ah-lowdb-plugin.ts](packages/gglass/src/modules/ah-lowdb-plugin.ts#L1)                  |   1    | Split ah-lowdb-plugin off as it's own npm module                                  |
 | [packages/gglass/src/modules/ah-session-plugin.ts](packages/gglass/src/modules/ah-session-plugin.ts#L1)              |   1    | Split ah-session-plugin off as it's own npm module                                |
+| [packages/gglass/src/modules/gglass-menu.ts](packages/gglass/src/modules/gglass-menu.ts#L16)                         |   16   | Shift the rest of the CRUD here from gglass-admin-menu                            |
 | [packages/gglass/src/modules/gglass-settings.ts](packages/gglass/src/modules/gglass-settings.ts#L37)                 |   37   | Think about how to best handle hiding sensitive information                       |
 | [packages/gglass/src/modules/gglass-settings.ts](packages/gglass/src/modules/gglass-settings.ts#L102)                |  102   | Better creation verification that the creation has failed                         |
 | [packages/gglass/src/modules/gglass-settings.ts](packages/gglass/src/modules/gglass-settings.ts#L144)                |  144   | Better creation verification that the update has failed                           |

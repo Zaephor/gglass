@@ -1,5 +1,5 @@
 import { Action, ActionProcessor, api } from "actionhero";
-import { model } from "../modules/gglass-menu";
+import { gglassMenu, model } from "../modules/gglass-menu";
 import { v4 as uuidv4 } from "uuid";
 
 const commandPrefix = "admin:menu:";
@@ -48,36 +48,7 @@ export class AdminMenuList extends AdminAction {
   }
 
   async run(data) {
-    await api.lowdb["menu"].read(); // Sync DB
-    data.response.menu = [];
-    if (!!data.params.id) {
-      data.response.menu = [
-        api.lowdb["menu"].get("entries").find({ id: data.params.id }).value(),
-      ];
-    } else {
-      let menuEntries = api.lowdb["menu"]
-        .get("entries")
-        .orderBy(["parent", "order", "label"], ["desc", "asc", "asc"])
-        .value();
-      menuEntries.forEach((ele) => {
-        let parentIdx = null;
-        if (!!ele.parent) {
-          parentIdx = api.lowdb["menu"]._.findIndex(data.response.menu, {
-            id: ele.parent,
-          });
-        }
-        if (!ele.parent || parentIdx === -1 || parentIdx === null) {
-          data.response.menu.push(ele);
-        } else {
-          if (!data.response.menu[parentIdx].children) {
-            data.response.menu[parentIdx].children = [];
-          }
-          if (!!data.response.menu[parentIdx].children) {
-            data.response.menu[parentIdx].children.push(ele);
-          }
-        }
-      });
-    }
+    data.response.menu = await gglassMenu.listAll();
   }
 }
 
