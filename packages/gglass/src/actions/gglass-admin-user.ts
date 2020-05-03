@@ -76,10 +76,14 @@ export class UpdateUserAction extends AdminAction {
   }
 
   async run(data) {
-    let { updated, user } = await gglassUser.update(
-      data.params.id,
-      data.params
-    );
+    let payload = {};
+    Object.keys(this.inputs).forEach((attr) => {
+      if (attr !== "id" && data.params[attr] !== undefined) {
+        payload[attr] = data.params[attr];
+      }
+    });
+
+    let { updated, user } = await gglassUser.update(data.params.id, payload);
     data.response.updated = updated;
     if (updated) {
       data.response.user = user;

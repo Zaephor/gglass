@@ -179,9 +179,10 @@ export const gglassUser = {
       return false;
     }
   },
+  // TODO: update function doesn't enforce model.user interface
   update: async function (
     userId: string,
-    { email = false, password = false, groups = false }
+    payload: object
   ): Promise<{ updated: boolean; user?: object }> {
     // TODO: Consider any error cases from this workflow, and that the updates were successful
     await api.lowdb["user"].read(); // Sync DB
@@ -194,19 +195,21 @@ export const gglassUser = {
       return { updated: false };
     } else {
       let update: any = {};
-      if (email !== false) {
-        update.email = email;
-      }
-      if (groups !== false) {
-        update.groups = groups;
-      }
-      if (
-        password !== false &&
-        typeof password === "string" &&
-        (<string>password).length > 0
-      ) {
-        update.password = await bcrypt.hash(password, saltRounds);
-      }
+      Object.keys(payload).forEach((k) => {
+        if (
+          k === "password" &&
+          typeof payload[k] === "string" &&
+          (<string>payload[k]).length > 0
+        ) {
+          bcrypt.hash(payload[k], saltRounds).then((resultHash) => {
+            update[k] = resultHash;
+          });
+        } else {
+          if (payload[k] !== false) {
+            update[k] = payload[k];
+          }
+        }
+      });
       let result = api.lowdb["user"]
         .get("users")
         .find({ id: userId })
@@ -220,7 +223,6 @@ export const gglassUser = {
   },
   delete: async function (userId: string): Promise<{ deleted: boolean }> {
     await api.lowdb["user"].read(); // Sync DB
-
     let result = await api.lowdb["user"]
       .get("users")
       .remove({ id: userId })
