@@ -39,7 +39,7 @@
                 v-model="update.groups"
                 multiple
                 :options="groups"
-                option-label="label"
+                option-label="id"
                 option-value="id"
                 emit-value
                 map-options
