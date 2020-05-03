@@ -23,17 +23,9 @@ export class GglassUser extends Initializer {
       // label: "User",
       icon: "child_care",
     };
-    let guestGroup: model.group = {
-      id: "guest",
-      // label: "Guest",
-    };
-    let anonGroup: model.group = {
-      id: "anon",
-      // label: "Anonymous",
-    };
     db.initialize("user", {
       users: [],
-      groups: [adminGroup, userGroup, guestGroup, anonGroup],
+      groups: [adminGroup, userGroup],
     });
     action.addMiddleware(middleware["user:inject"]);
     action.addMiddleware(middleware["user:logged_in"]);
