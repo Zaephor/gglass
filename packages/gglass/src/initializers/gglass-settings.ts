@@ -1,6 +1,6 @@
 import { Initializer, log } from "actionhero";
 import { db } from "../modules/ah-lowdb-plugin";
-import { gglassSettings } from "../modules/gglass-settings";
+import { gglassSettings, model } from "../modules/gglass-settings";
 
 let default_settings = [
   {

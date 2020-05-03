@@ -3,8 +3,8 @@ import { api } from "actionhero";
 export namespace model {
   export interface config {
     id: string;
-    group?: string;
     type: string;
+    group?: string;
     value?: any;
     default_value?: any;
     order?: number;
@@ -32,7 +32,7 @@ export const util = {
 };
 
 export const gglassSettings = {
-  list: async function (settingId?: string): Promise<Array<object>> {
+  list: async function (settingId?: string): Promise<Array<model.config>> {
     await api.lowdb["settings"].read(); // Sync DB
     // TODO: Think about how to best handle hiding sensitive information
     if (!!settingId) {
