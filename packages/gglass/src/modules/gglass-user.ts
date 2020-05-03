@@ -200,7 +200,11 @@ export const gglassUser = {
       if (groups !== false) {
         update.groups = groups;
       }
-      if (password !== false) {
+      if (
+        password !== false &&
+        typeof password === "string" &&
+        (<string>password).length > 0
+      ) {
         update.password = await bcrypt.hash(password, saltRounds);
       }
       let result = api.lowdb["user"]

@@ -36,7 +36,7 @@ export class ListUserAction extends AdminAction {
 export class CreateUserAction extends AdminAction {
   constructor() {
     super();
-    this.name = commandPrefix + "insert";
+    this.name = commandPrefix + "create";
     this.description = "Create a new user";
     this.inputs = {
       email: { required: true },
