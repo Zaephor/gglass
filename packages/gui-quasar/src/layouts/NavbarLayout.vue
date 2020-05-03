@@ -1,11 +1,5 @@
 <template>
-  <q-drawer
-    v-model="gglass.navDisplay"
-    side="left"
-    overlay
-    behavior="desktop"
-    bordered
-  >
+  <div>
     <q-tabs v-model="navTab" align="justify">
       <q-tab
         name="menu"
@@ -44,7 +38,7 @@
         </q-list>
       </q-tab-panel>
     </q-tab-panels>
-  </q-drawer>
+  </div>
 </template>
 
 <script>
@@ -86,11 +80,7 @@ export default {
     return {};
   },
   methods: {
-    ...mapActions("gglass", [
-      "toggleGlassNav", // -> this.toggleGlassNav()
-      "gglassWhoami",
-      "setNavTab",
-    ]),
+    ...mapActions("gglass", ["gglassWhoami", "setNavTab"]),
   },
   created: function () {
     this.gglassWhoami();

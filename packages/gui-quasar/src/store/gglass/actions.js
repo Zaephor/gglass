@@ -1,7 +1,3 @@
-export function toggleGlassNav({ commit }) {
-  commit("toggleGlassNav");
-}
-
 export function setNavTab({ commit }, data) {
   commit("setNavTab", data);
 }

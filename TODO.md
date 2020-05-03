@@ -30,6 +30,6 @@
 | [packages/gui-quasar/src/components/AdminUser.vue](packages/gui-quasar/src/components/AdminUser.vue#L2)              |   2    | Cut out the create dialog from here, finish tinkering with AdminUserElement       |
 | [packages/gui-quasar/src/components/AdminUser.vue](packages/gui-quasar/src/components/AdminUser.vue#L32)             |   32   | Figure out how the heck to get the accordion to quit changing when I hit Edit     |
 | [packages/gui-quasar/src/components/UserAuth.vue](packages/gui-quasar/src/components/UserAuth.vue#L146)              |  146   | Put in a proper Google icon here                                                  |
-| [packages/gui-quasar/src/store/gglass/actions.js](packages/gui-quasar/src/store/gglass/actions.js#L31)               |   31   | Error popup, clear local cookies/sessions                                         |
-| [packages/gui-quasar/src/store/gglass/actions.js](packages/gui-quasar/src/store/gglass/actions.js#L43)               |   43   | Error popup                                                                       |
-| [packages/gui-quasar/src/store/gglass/actions.js](packages/gui-quasar/src/store/gglass/actions.js#L54)               |   54   | Error popup                                                                       |
+| [packages/gui-quasar/src/store/gglass/actions.js](packages/gui-quasar/src/store/gglass/actions.js#L27)               |   27   | Error popup, clear local cookies/sessions                                         |
+| [packages/gui-quasar/src/store/gglass/actions.js](packages/gui-quasar/src/store/gglass/actions.js#L39)               |   39   | Error popup                                                                       |
+| [packages/gui-quasar/src/store/gglass/actions.js](packages/gui-quasar/src/store/gglass/actions.js#L50)               |   50   | Error popup                                                                       |

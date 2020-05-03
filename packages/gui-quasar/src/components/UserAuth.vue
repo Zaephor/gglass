@@ -213,7 +213,6 @@ export default {
   },
   methods: {
     ...mapActions("gglass", [
-      "toggleGlassNav", // -> this.toggleGlassNav()
       "gglassRegister",
       "gglassLogin",
       "gglassWhoami",

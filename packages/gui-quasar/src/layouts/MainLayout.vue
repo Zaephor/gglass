@@ -2,15 +2,29 @@
   <q-layout view="hHh LpR fff">
     <q-header class="bg-primary text-white" height-hint="98">
       <q-toolbar>
-        <q-btn dense flat round icon="apps" @click="toggleGlassNav" />
+        <q-btn
+          dense
+          flat
+          round
+          icon="apps"
+          @click="navBarDisplay = !navBarDisplay"
+        />
 
-        <q-toolbar-title @click="toggleGlassNav">
+        <q-toolbar-title @click="navBarDisplay = !navBarDisplay">
           gglass
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
 
-    <navbar-layout />
+    <q-drawer
+      v-model="navBarDisplay"
+      side="left"
+      overlay
+      behavior="desktop"
+      bordered
+    >
+      <navbar-layout />
+    </q-drawer>
 
     <q-page-container>
       <router-view />
@@ -26,10 +40,13 @@ export default {
   components: {
     NavbarLayout,
   },
+  data() {
+    return {
+      navBarDisplay: true,
+    };
+  },
   methods: {
-    ...mapActions("gglass", [
-      "toggleGlassNav", // -> this.toggleGlassNav()
-    ]),
+    ...mapActions("gglass", []),
   },
 };
 </script>
