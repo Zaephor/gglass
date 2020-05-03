@@ -6,7 +6,7 @@ export namespace model {
   export interface entry {
     id: string;
     label: string;
-    order?: number;
+    sortorder?: number;
     icon?: string;
     url?: string;
     target?: string;
@@ -24,7 +24,7 @@ export const gglassMenu = {
       ? [api.lowdb["menu"].get("entries").find({ id: menuId }).value()]
       : api.lowdb["menu"]
           .get("entries")
-          .orderBy(["parent", "order", "label"], ["desc", "asc", "asc"])
+          .orderBy(["parent", "sortorder", "label"], ["desc", "asc", "asc"])
           .value();
     menuEntries.forEach((ele) => {
       // Add element
@@ -57,7 +57,7 @@ export const gglassMenu = {
       ? [api.lowdb["menu"].get("entries").find({ id: menuId }).value()]
       : api.lowdb["menu"]
           .get("entries")
-          .orderBy(["parent", "order", "label"], ["desc", "asc", "asc"])
+          .orderBy(["parent", "sortorder", "label"], ["desc", "asc", "asc"])
           .value();
     // Filter submenus furst, then filter root menus after
     menuEntries.forEach((ele) => {
@@ -102,7 +102,7 @@ export const gglassMenu = {
   },
   create: async function (
     label: string,
-    order?: number,
+    sortorder?: number,
     icon?: string,
     url?: string,
     target?: string,
@@ -113,7 +113,7 @@ export const gglassMenu = {
     let newEntry: model.entry = {
       id: uuidv4(),
       label,
-      order,
+      sortorder,
       icon,
       url,
       target,

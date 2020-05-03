@@ -59,7 +59,7 @@ export class AdminMenuCreate extends AdminAction {
     this.description = "create a menu item";
     this.inputs = {
       label: { required: true },
-      order: { required: false },
+      sortorder: { required: false },
       icon: { required: false },
       url: { required: false },
       target: { required: false },
@@ -72,7 +72,7 @@ export class AdminMenuCreate extends AdminAction {
   async run(data) {
     let { created, entry } = await gglassMenu.create(
       data.params.label,
-      data.params.order || undefined,
+      data.params.sortorder || undefined,
       data.params.icon || undefined,
       data.params.url || undefined,
       data.params.target || undefined,
@@ -94,7 +94,7 @@ export class AdminMenuUpdate extends AdminAction {
     this.inputs = {
       id: { required: true },
       label: { required: false },
-      order: { required: false },
+      sortorder: { required: false },
       icon: { required: false },
       url: { required: false },
       target: { required: false },
