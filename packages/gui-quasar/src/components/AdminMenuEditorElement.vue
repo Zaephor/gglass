@@ -1,6 +1,7 @@
 <template>
   <div>
     <q-btn round size="sm" icon="settings" @click="editing = true" />
+    <!-- TODO: Make dialog visually prettier/organized -->
     <q-dialog v-model="editing" @before-show="loadEntry">
       <q-card style="width: 700px; max-width: 80vw;" class="q-pt-none">
         <q-form @submit="saveEntry">
@@ -14,6 +15,13 @@
               <q-input filled dense v-model="update.label" label="Label" />
               <q-input filled dense v-model="update.icon" label="Icon" />
               <q-input filled dense v-model="update.url" label="URL" />
+              <q-input
+                filled
+                dense
+                v-model.number="update.sortorder"
+                label="Sort Order"
+                type="number"
+              />
 
               <q-select
                 clearable
@@ -90,6 +98,7 @@ export default {
       editing: false,
       update: {
         label: null,
+        order: null,
         icon: null,
         url: null,
         target: null,

@@ -39,6 +39,7 @@
         </q-tree>
 
         <!-- New entry dialog -->
+        <!-- TODO: Make dialog visually prettier/organized -->
         <q-dialog v-model="editing" @before-show="loadEntry">
           <q-card style="width: 700px; max-width: 80vw;" class="q-pt-none">
             <q-form @submit="createEntry">
@@ -51,6 +52,13 @@
                   <q-input filled dense v-model="create.label" label="Label" />
                   <q-input filled dense v-model="create.icon" label="Icon" />
                   <q-input filled dense v-model="create.url" label="URL" />
+                  <q-input
+                    filled
+                    dense
+                    v-model.number="create.sortorder"
+                    label="Sort Order"
+                    type="number"
+                  />
 
                   <q-select
                     clearable
@@ -157,7 +165,7 @@ export default {
       this.create = {
         id: null,
         label: null,
-        order: null,
+        sortorder: null,
         icon: null,
         url: null,
         target: null,
