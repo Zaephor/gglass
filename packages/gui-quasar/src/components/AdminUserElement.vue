@@ -31,6 +31,13 @@
                 v-model="update.password"
                 label="Password"
                 type="password"
+                :rules="[
+                  (val) =>
+                    !val ||
+                    (!!val && val.length === 0) ||
+                    (val && val.length >= 8) ||
+                    'Please use a password longer than 8 characters',
+                ]"
               />
 
               <q-select
@@ -86,6 +93,9 @@ export default {
   },
   methods: {
     ...mapActions("admin", ["syncUsers", "syncGroups"]),
+    async something(val) {
+      console.log({ val });
+    },
     async loadUser() {
       this.syncGroups();
       this.update.email = this.element.email;

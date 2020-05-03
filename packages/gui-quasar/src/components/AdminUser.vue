@@ -25,7 +25,7 @@
             />
           </template>
           <template v-slot:after>
-            <q-btn round size="sm" icon="add" @click="entry.id = ''" />
+            <q-btn round size="sm" icon="add" @click="editing = true" />
           </template>
         </q-input>
 
@@ -35,21 +35,16 @@
             <!--            <q-icon :name="prop.node.icon" class="q-mr-sm" />-->
             <div>{{ prop.node.email }}</div>
             <q-space />
-
             <admin-user-element :element="prop.node" />
           </template>
         </q-tree>
 
-        <!-- Dialog form -->
-        <q-dialog
-          v-model="editElement"
-          @hide="resetEntry"
-          @before-show="loadEntry"
-        >
+        <!-- New user Dialog form -->
+        <q-dialog v-model="editing" @before-show="syncGroups">
           <q-card style="width: 700px; max-width: 80vw;" class="q-pt-none">
-            <q-form @submit="createEntry" @reset="resetEntry">
+            <q-form @submit="createUser">
               <q-card-section>
-                <div class="text-h6">Add/Edit</div>
+                <div class="text-h6">New User</div>
               </q-card-section>
 
               <q-card-section class="q-pt-none">
@@ -57,15 +52,7 @@
                   <q-input
                     filled
                     dense
-                    v-model="entry.id"
-                    label="id"
-                    disabled
-                  />
-
-                  <q-input
-                    filled
-                    dense
-                    v-model="entry.email"
+                    v-model="create.email"
                     label="Email"
                     :rules="[
                       (val) =>
@@ -76,10 +63,11 @@
                     ]"
                   />
 
+                  <!-- TODO: Add back the validation here, >8 chars -->
                   <q-input
                     filled
                     dense
-                    v-model="entry.password"
+                    v-model="create.password"
                     label="Password"
                     type="password"
                     :rules="[
@@ -92,10 +80,10 @@
                   <q-select
                     filled
                     dense
-                    v-model="entry.groups"
+                    v-model="create.groups"
                     multiple
                     :options="groups"
-                    option-label="label"
+                    option-label="id"
                     option-value="id"
                     emit-value
                     map-options
@@ -107,16 +95,6 @@
               </q-card-section>
 
               <q-card-actions align="right" class="text-primary">
-                <div align="left" v-if="entry.id !== null && entry.id !== ''">
-                  <q-btn
-                    flat
-                    color="red"
-                    label="Delete"
-                    @click="deleteEntry"
-                    v-close-popup
-                  />
-                </div>
-                <q-space />
                 <div align="right">
                   <q-btn flat type="submit" label="Save" v-close-popup />
                   <q-btn flat label="Cancel" v-close-popup />
@@ -142,19 +120,16 @@ export default {
       users: (state) => state.admin.users,
       groups: (state) => state.admin.groups,
     }),
-    editElement: {
-      get: function () {
-        return this.entry.id !== null;
-      },
-      set: function () {
-        this.entry.id = null;
-      },
-    },
   },
   data() {
     return {
       menuFilter: "",
-      entry: {},
+      editing: false,
+      create: {
+        email: null,
+        password: null,
+        groups: [],
+      },
     };
   },
   methods: {
@@ -163,59 +138,27 @@ export default {
       this.menuFilter = "";
       this.$refs.menuFilter.focus();
     },
-    resetEntry() {
-      this.entry = {
-        id: null,
+    async createUser() {
+      let createData = {};
+      Object.keys(this.create).forEach((k) => {
+        if (this.create[k] !== null) {
+          createData[k] = this.create[k];
+        }
+      });
+      await this.$actionhero.action("admin:user:create", createData);
+      await this.syncUsers();
+      await this.resetNewUser();
+    },
+    async resetNewUser() {
+      this.create = {
         email: null,
         password: null,
         groups: [],
       };
     },
-    async loadEntry() {
-      this.syncGroups();
-      if (!!this.entry.id) {
-        let results = await this.$actionhero.action("admin:user:list", {
-          id: this.entry.id,
-        });
-        if (results.users && results.users.length === 1) {
-          Object.keys(this.entry).forEach((attr) => {
-            if (results.users[0][attr]) {
-              this.entry[attr] = results.users[0][attr];
-            }
-          });
-        } else {
-          //TODO: error case
-          console.log("//TODO: error case");
-        }
-      }
-    },
-    async createEntry() {
-      if (this.entry.id === "") {
-        await this.$actionhero.action("admin:user:insert", {
-          email: this.entry.email,
-          password: this.entry.password,
-          groups: this.entry.groups,
-        });
-      } else {
-        await this.$actionhero.action("admin:user:update", {
-          id: this.entry.id,
-          email: this.entry.email,
-          password: this.entry.password,
-          groups: this.entry.groups,
-        });
-      }
-      await this.syncUsers();
-    },
-    async deleteEntry() {
-      this.$actionhero
-        .action("admin:user:delete", { id: this.entry.id })
-        .then(() => {
-          this.syncUsers();
-        });
-    },
   },
   created: function () {
-    this.resetEntry();
+    this.resetNewUser();
   },
 };
 </script>
