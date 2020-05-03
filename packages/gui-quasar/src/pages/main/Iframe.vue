@@ -1,6 +1,7 @@
 <template>
   <q-page class="flex flex-center">
-    SURPRISE!
+    <!--    SURPRISE!-->
+    {{ this.$route.fullPath }}
   </q-page>
 </template>
 
@@ -10,9 +11,8 @@ export default {
   data() {
     return {};
   },
+  computed: {},
   methods: {},
-  created: function () {
-    console.log({ iframe: this });
-  },
+  created: function () {},
 };
 </script>

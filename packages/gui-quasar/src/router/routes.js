@@ -6,7 +6,7 @@ const routes = [
       {
         path: "",
         components: { default: () => import("pages/main/Index.vue") },
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: false },
       },
       {
         path: "*",
