@@ -24,7 +24,6 @@
                 ]"
               />
 
-              <!-- TODO: Add back the validation here, allow null OR >8 chars -->
               <q-input
                 filled
                 dense
@@ -103,9 +102,6 @@ export default {
   },
   methods: {
     ...mapActions("admin", ["syncUsers", "syncGroups"]),
-    async something(val) {
-      console.log({ val });
-    },
     async loadUser() {
       this.syncGroups();
       this.update.email = this.element.email;

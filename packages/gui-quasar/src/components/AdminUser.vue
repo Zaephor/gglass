@@ -63,7 +63,6 @@
                     ]"
                   />
 
-                  <!-- TODO: Add back the validation here, >8 chars -->
                   <q-input
                     filled
                     dense
