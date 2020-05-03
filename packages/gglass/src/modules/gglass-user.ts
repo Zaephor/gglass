@@ -100,6 +100,10 @@ export const middleware = {
 
 // gglass user lib
 export const gglassUser = {
+  count: async function (): Promise<number> {
+    let userCount = api.lowdb["user"].get("users").size().value();
+    return userCount || 0;
+  },
   list: async function (userId?: string): Promise<Array<object>> {
     await api.lowdb["user"].read(); // Sync DB
     if (!!userId) {

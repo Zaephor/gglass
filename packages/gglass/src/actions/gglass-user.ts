@@ -1,6 +1,7 @@
 import { Action, api, config } from "actionhero";
 import { gglassUser, model } from "../modules/gglass-user";
 import { session } from "../modules/ah-session-plugin";
+import { gglassSettings } from "../modules/gglass-settings";
 
 const commandPrefix = "user:";
 
@@ -10,6 +11,7 @@ const commandPrefix = "user:";
 
 export class WhoAmIAction extends Action {
   user_logged_in = false;
+
   constructor() {
     super();
     this.name = commandPrefix + "whoami";
@@ -25,8 +27,54 @@ export class WhoAmIAction extends Action {
   }
 }
 
+export class EnabledAuth extends Action {
+  user_logged_in = false;
+
+  constructor() {
+    super();
+    this.name = commandPrefix + "enabled";
+    this.description = "List what logins/registrations are enabled";
+    this.logLevel = "debug";
+    this.inputs = {};
+    this.outputExample = {};
+  }
+
+  async run(data) {
+    let userCount = await gglassUser.count();
+
+    // Can always login
+    data.response.login = true;
+
+    // Conditional registration
+    let register = (await gglassSettings.list("user_registration"))[0];
+
+    data.response.register =
+      userCount === 0 ||
+      (register["value"] !== undefined
+        ? register["value"]
+        : register["default_value"]);
+
+    // Gauth section
+    // Gauth in general
+    let gauthLogin = (await gglassSettings.list("user_gauth_login"))[0];
+    data.response.gauth_login =
+      gauthLogin["value"] !== undefined
+        ? gauthLogin["value"]
+        : gauthLogin["default_value"];
+    // Block new Gauth registrations
+    let gauthRegister = (
+      await gglassSettings.list("user_gauth_registration")
+    )[0];
+    data.response.gauth_register =
+      gauthRegister["value"] !== undefined
+        ? gauthRegister["value"]
+        : gauthRegister["default_value"];
+  }
+}
+
 export class LoginProfileAction extends Action {
   user_logged_in = false;
+
   constructor() {
     super();
     this.name = commandPrefix + "login";
@@ -71,6 +119,7 @@ export class LoginProfileAction extends Action {
 // TODO: Always activate if user table is empty
 export class RegisterProfileAction extends Action {
   user_logged_in = false;
+
   constructor() {
     super();
     this.name = commandPrefix + "register";
@@ -92,6 +141,18 @@ export class RegisterProfileAction extends Action {
   }
 
   async run(data) {
+    let registrationSetting = (
+      await gglassSettings.list("user_registration")
+    )[0];
+    let userCount = await gglassUser.count();
+    if (
+      userCount > 0 &&
+      (registrationSetting["value"] !== undefined
+        ? registrationSetting["value"]
+        : registrationSetting["default_value"]) === false
+    ) {
+      throw new Error("Registration has been disabled.");
+    }
     if (!!data.session || !!data.user) {
       throw new Error("Already logged in.");
     }
