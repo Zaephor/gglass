@@ -142,9 +142,7 @@ export class RegisterProfileAction extends Action {
   }
 
   async run(data) {
-    let registrationSetting = (
-      await gglassSettings.list("user_registration")
-    )[0];
+    let [registrationSetting] = await gglassSettings.list("user_registration");
     let userCount = await gglassUser.count();
     if (
       userCount > 0 &&
@@ -200,6 +198,7 @@ export class LogoutProfileAction extends Action {
 }
 
 // Google Auth Flow
+// TODO: Check for possible error flows
 export class GoogleAuth extends Action {
   user_logged_in = false;
 
@@ -213,19 +212,25 @@ export class GoogleAuth extends Action {
   }
 
   async run(data) {
-    let gauth_url = await util.google.authUrl(
-      data.connection.rawConnection.req.headers.host
-    );
-    if (data.connection.type === "web") {
-      data.connection.rawConnection.responseHeaders.push([
-        "Location",
-        gauth_url,
-      ]);
-      data.connection.setStatusCode(302);
+    let [googleLogin] = await gglassSettings.list("user_gauth_login");
+    if (googleLogin.value === true) {
+      let gauth_url = await util.google.authUrl(
+        data.connection.rawConnection.req.headers.host
+      );
+      if (data.connection.type === "web") {
+        data.connection.rawConnection.responseHeaders.push([
+          "Location",
+          gauth_url,
+        ]);
+        data.connection.setStatusCode(302);
+      }
+    } else {
+      data.response.error = "Login via Google auth is disabled.";
     }
   }
 }
 
+// TODO: Check for possible error flows
 export class GoogleAuthCallback extends Action {
   user_logged_in = false;
 
@@ -251,18 +256,28 @@ export class GoogleAuthCallback extends Action {
       let userCheck = await gglassUser.find(gauthResult.email);
       if (!userCheck) {
         // User doesn't exist, create if enabled
-        let userResult = await gglassUser.create(
-          gauthResult.email,
-          gauthResult.id
+        let [googleRegistration] = await gglassSettings.list(
+          "user_gauth_registration"
         );
-        if (userResult.created) {
-          userCheck = userResult.user;
+        if (googleRegistration.value === true) {
+          let userResult = await gglassUser.create(
+            gauthResult.email,
+            gauthResult.id
+          );
+          if (userResult.created) {
+            userCheck = userResult.user;
+          } else {
+            data.response.error = userResult.error;
+          }
         } else {
-          data.response.error = userResult.error;
+          data.response.error = "Registration via Google auth is disabled.";
         }
       }
-      if (!!userCheck) {
-        // User exists, login if google login is enabled
+      // User exists, login if google login is enabled
+      let [googleLogin] = await gglassSettings.list("user_gauth_login");
+      if (googleLogin.value !== true) {
+        data.response.error = "Login via Google auth is disabled.";
+      } else {
         if (!!userCheck) {
           await session.create(data.connection, userCheck);
           data.response.user = userCheck;
@@ -275,7 +290,6 @@ export class GoogleAuthCallback extends Action {
           }
         } else {
           data.response.user = false;
-          // tODO: Check for possible error flows
           data.response.error = "Not sure.";
         }
       }
