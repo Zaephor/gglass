@@ -6,12 +6,14 @@ const routes = [
       {
         path: "",
         components: { default: () => import("pages/main/Index.vue") },
-        meta: { requiresAuth: false },
       },
       {
-        path: "*",
+        path: ":id",
         components: { default: () => import("pages/main/Iframe.vue") },
-        meta: { requiresAuth: true },
+      },
+      {
+        path: ":id/:childId",
+        components: { default: () => import("pages/main/Iframe.vue") },
       },
     ],
   },
