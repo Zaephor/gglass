@@ -1,7 +1,9 @@
-import { log, config, api } from "actionhero";
+import { google } from "googleapis";
+import { api } from "actionhero";
 
 import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcryptjs";
+import { gglassSettings } from "./gglass-settings";
 
 const saltRounds = 5;
 
@@ -20,6 +22,28 @@ export namespace model {
     icon?: string;
   }
 }
+
+const googleUtil = {
+  defaultScope: [
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile",
+  ],
+  async createConnection(basehost) {
+    return new google.auth.OAuth2(
+      (await gglassSettings.list("user_gauth_id"))[0].value,
+      (await gglassSettings.list("user_gauth_secret"))[0].value,
+      // TODO: Correct and validate this for http and https
+      "http://" + basehost + "/api?action=user:google:callback"
+    );
+  },
+  getConnectionUrl(auth) {
+    return auth.generateAuthUrl({
+      access_type: "offline",
+      prompt: "consent",
+      scope: googleUtil.defaultScope,
+    });
+  },
+};
 
 // gglass user utilities
 export const util = {
@@ -41,6 +65,34 @@ export const util = {
       acc.push(this.omitKeysObject(cur, filter));
       return acc;
     }, []);
+  },
+  google: {
+    authUrl: async (baseHost) => {
+      return googleUtil.getConnectionUrl(
+        await googleUtil.createConnection(baseHost)
+      );
+    },
+    callback: async (baseHost, code) => {
+      const auth = await googleUtil.createConnection(baseHost);
+      const data = await auth.getToken(code);
+      const tokens = data.tokens;
+      auth.setCredentials(tokens);
+      const people = google.people({ version: "v1", auth });
+      const me = await people.people.get({
+        resourceName: "people/me",
+        personFields: "emailAddresses,names,photos",
+      });
+      const userGoogleId = me.data.resourceName;
+      const userGoogleEmail =
+        me.data.emailAddresses &&
+        me.data.emailAddresses.length &&
+        me.data.emailAddresses[0].value;
+      return {
+        id: userGoogleId,
+        email: userGoogleEmail,
+        tokens: tokens,
+      };
+    },
   },
 };
 
@@ -120,6 +172,13 @@ export const gglassUser = {
       );
     }
   },
+  find: async function (email: string) {
+    await api.lowdb["user"].read(); // Sync DB
+    return util.omitKeysObject(
+      api.lowdb["user"].get("users").find({ email }).value(),
+      util.hideAttributes
+    );
+  },
   create: async function (
     email: string,
     password: string,
@@ -174,6 +233,18 @@ export const gglassUser = {
       .find({ email })
       .value();
     if (!!userCheck && (await bcrypt.compare(password, userCheck.password))) {
+      return util.omitKeysObject(userCheck, util.hideAttributes);
+    } else {
+      return false;
+    }
+  },
+  google_login: async function (email: string, id: string) {
+    await api.lowdb["user"].read(); // Sync DB
+    let userCheck = await api.lowdb["user"]
+      .get("users")
+      .find({ email })
+      .value();
+    if (!!userCheck) {
       return util.omitKeysObject(userCheck, util.hideAttributes);
     } else {
       return false;
