@@ -30,6 +30,7 @@
   "dependencies": {
     "actionhero": "22.0.8",
     "bcryptjs": "^2.4.3",
+    "googleapis": "^49.0.0",
     "ioredis": "latest",
     "lowdb": "^1.0.0",
     "uuid": "^8.0.0",
