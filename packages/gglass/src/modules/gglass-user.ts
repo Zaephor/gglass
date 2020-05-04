@@ -173,6 +173,7 @@ export const gglassUser = {
     }
   },
   find: async function (email: string) {
+    email = email.toString().toLowerCase();
     await api.lowdb["user"].read(); // Sync DB
     return util.omitKeysObject(
       api.lowdb["user"].get("users").find({ email }).value(),
@@ -184,6 +185,7 @@ export const gglassUser = {
     password: string,
     groups?: Array<string>
   ): Promise<{ created: boolean; user?: object; error?: string }> {
+    email = email.toString().toLowerCase();
     await api.lowdb["user"].read(); // Sync DB
     // Find user by email
     let userCheck = api.lowdb["user"].get("users").find({ email }).value();
@@ -227,6 +229,7 @@ export const gglassUser = {
     email: string,
     password: string
   ): Promise<object | boolean> {
+    email = email.toString().toLowerCase();
     await api.lowdb["user"].read(); // Sync DB
     let userCheck = await api.lowdb["user"]
       .get("users")
@@ -239,6 +242,7 @@ export const gglassUser = {
     }
   },
   google_login: async function (email: string, id: string) {
+    email = email.toString().toLowerCase();
     await api.lowdb["user"].read(); // Sync DB
     let userCheck = await api.lowdb["user"]
       .get("users")
@@ -275,6 +279,12 @@ export const gglassUser = {
           bcrypt.hash(payload[k], saltRounds).then((resultHash) => {
             update[k] = resultHash;
           });
+        } else if (
+          k === "email" &&
+          typeof payload[k] === "string" &&
+          (<string>payload[k]).length > 0
+        ) {
+          update[k] = payload[k].toString().toLowerCase();
         } else {
           if (payload[k] !== false) {
             update[k] = payload[k];
