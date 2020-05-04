@@ -2,12 +2,12 @@
   <div>
     <!-- Single Element -->
     <q-item
-      :clickable="!!(element.path || element.url)"
+      :clickable="!!(element.path || element.href)"
       :inset-level="type !== 'root' ? 0.3 : 0"
-      :tag="url ? 'a' : 'div'"
+      :tag="href ? 'a' : 'div'"
       :to="to"
-      :href="url"
-      :target="element.target ? element.target : undefined"
+      :href="href"
+      :target="element.target ? element.target : 'iframe'"
     >
       <q-item-section avatar>
         <q-icon :name="element.icon" />
@@ -32,15 +32,17 @@ export default {
     ...mapState({
       gglass: (state) => state.gglass,
     }),
-    url() {
-      return !(!!this.element.url && this.element.url.startsWith("/"))
-        ? this.element.url
-        : undefined;
+    href() {
+      return this.element.target === "_blank" ? this.element.url : undefined;
     },
     to() {
-      return !!this.element.url && this.element.url.startsWith("/")
-        ? this.element.url
-        : undefined;
+      if (this.target === "_blank") {
+        return undefined;
+      } else {
+        return !!this.element.parent
+          ? "/" + this.element.parent + "/" + this.element.id
+          : "/" + this.element.id;
+      }
     },
   },
   methods: {},
