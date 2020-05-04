@@ -140,6 +140,8 @@
       clickable
       v-ripple
       v-if="gglass.user === false && enabled.gauth_login"
+      tag="a"
+      href="/api?action=user:google:auth"
     >
       <q-item-section avatar>
         <!--        <q-avatar icon="lock" />-->
@@ -156,6 +158,9 @@
     </q-item>
 
     <!--  User Profile/etc section  -->
+    <!-- TODO: Make prettier -->
+    <!-- TODO: Add flow for user to change own password -->
+    <!-- TODO: Add flow for user to delete self -->
     <template v-if="gglass.user !== false">
       <q-expansion-item
         expand-separator
@@ -165,9 +170,9 @@
       >
         <q-card>
           <q-card-section>
-            {{ gglass.user.id }}
-            {{ gglass.user.email }}
-            {{ gglass.groups }}
+            {{ gglass.user.id }} <br />
+            {{ gglass.user.email }} <br />
+            {{ gglass.groups }} <br />
           </q-card-section>
         </q-card>
       </q-expansion-item>
