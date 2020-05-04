@@ -61,11 +61,10 @@
                   />
 
                   <q-select
-                    clearable
                     filled
                     dense
                     v-model="create.target"
-                    :options="['_blank']"
+                    :options="['iframe', '_blank']"
                     map-options
                     options-dense
                     label="Target"
