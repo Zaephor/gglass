@@ -1,7 +1,12 @@
 import { Action, api, config } from "actionhero";
-import { gglassUser, model, util } from "../modules/gglass-user";
+import {
+  gglassUser,
+  model,
+  util as gglassUserUtil,
+} from "../modules/gglass-user";
 import { session } from "../modules/ah-session-plugin";
 import { gglassSettings } from "../modules/gglass-settings";
+const util = require("util");
 
 const commandPrefix = "user:";
 
@@ -214,7 +219,7 @@ export class GoogleAuth extends Action {
   async run(data) {
     let [googleLogin] = await gglassSettings.list("user_gauth_login");
     if (googleLogin.value === true) {
-      let gauth_url = await util.google.authUrl(
+      let gauth_url = await gglassUserUtil.google.authUrl(
         data.connection.rawConnection.req.headers.host
       );
       if (data.connection.type === "web") {
@@ -248,7 +253,7 @@ export class GoogleAuthCallback extends Action {
   }
 
   async run(data) {
-    let gauthResult = await util.google.callback(
+    let gauthResult = await gglassUserUtil.google.callback(
       data.connection.rawConnection.req.headers.host,
       data.params.code
     );
@@ -294,5 +299,23 @@ export class GoogleAuthCallback extends Action {
         }
       }
     }
+  }
+}
+
+// Traefik Validation endpoint
+export class TraefikAuthCheck extends Action {
+  user_logged_in = false;
+
+  constructor() {
+    super();
+    this.name = commandPrefix + "traefik:auth_check";
+    this.description = "Endpoint for traefik to do forward auth";
+    // this.logLevel = "debug";
+    this.inputs = {};
+    this.outputExample = {};
+  }
+
+  async run(data) {
+    console.log(util.inspect(data, false, null, true /* enable colors */));
   }
 }
