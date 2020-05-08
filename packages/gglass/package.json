@@ -28,9 +28,9 @@
     "node": ">=8.0.0"
   },
   "dependencies": {
-    "actionhero": "22.0.8",
+    "actionhero": "22.0.9",
     "bcryptjs": "^2.4.3",
-    "googleapis": "^49.0.0",
+    "googleapis": "^50.0.0",
     "ioredis": "latest",
     "lowdb": "^1.0.0",
     "uuid": "^8.0.0",
