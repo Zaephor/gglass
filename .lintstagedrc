@@ -1,4 +1,7 @@
 {
+  "./compose/*.{js,ts,vue,json,md,yml,yaml}": [
+    "prettier --write"
+  ],
   "**/{src,test,__tests__}/**/*.{js,ts,vue,json,md,yml,yaml}": [
     "prettier --write"
   ],
