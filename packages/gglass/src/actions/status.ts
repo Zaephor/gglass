@@ -9,8 +9,9 @@ const maxEventLoopDelay = process.env.eventLoopDelay || 10;
 const maxMemoryAlloted = process.env.maxMemoryAlloted || 500;
 const maxResqueQueueLength = process.env.maxResqueQueueLength || 1000;
 
-module.exports = class Status extends Action {
+export class Status extends Action {
   user_logged_in = false;
+
   constructor() {
     super();
     this.name = "status";
@@ -72,4 +73,4 @@ module.exports = class Status extends Action {
     await this.checkRam(data);
     await this.checkResqueQueues(data);
   }
-};
+}
