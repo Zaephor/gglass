@@ -42,7 +42,7 @@ _build: &_build
     - sudo docker run --privileged linuxkit/binfmt:v0.7
   script:
     - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}" &> /dev/null
-    - export DOCKERFILE_PATH=Dockerfile
+    - export DOCKERFILE_PATH=Dockerfile.ci
     #  - bash .travis/build-gui
     - bash .travis/build
 

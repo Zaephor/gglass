@@ -1,5 +1,6 @@
 ## Build everything
-FROM lsiobase/alpine:3.11 as build
+#FROM lsiobase/alpine:3.11 as build
+FROM --platform=$BUILDPLATFORM lsiobase/alpine:3.11 as build
 COPY . /project
 RUN \
     apk add --no-cache git nodejs npm && \
