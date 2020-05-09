@@ -21,7 +21,8 @@ COPY --from=build /project/packages/gglass /app
 COPY --from=build /project/packages/${BUILD_GUI}/dist/spa /app/public
 RUN \
     apk add --no-cache git nodejs npm && \
-    cd /app && npm ci --production
+    cd /app && npm ci --production && \
+    chown -R 911:911 /app
 
 ## Put results together
 FROM lsiobase/alpine:3.11
