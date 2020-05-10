@@ -22,7 +22,7 @@ iframe {
 </style>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "Iframe",
@@ -41,15 +41,23 @@ export default {
     "$route.params.childId": function () {
       this.updateIframe();
     },
+    user: function () {
+      this.updateIframe();
+    },
   },
   computed: {
     ...mapState({
       nav: (state) => state.gglass.nav,
+      user: (state) => state.gglass.user,
     }),
   },
   methods: {
-    updateIframe() {
+    ...mapActions("gglass", ["syncNav"]),
+    async updateIframe() {
       let entry = null;
+      if (this.nav.length === 0) {
+        await this.syncNav();
+      }
       if (this.nav.length > 0) {
         if (this.$route.params.id) {
           entry = this.nav.find((ele) => ele.id === this.$route.params.id);
