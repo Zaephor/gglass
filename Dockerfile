@@ -38,4 +38,4 @@ COPY --from=combine /app /app
 #COPY --from=build /project/packages/${BUILD_GUI}/dist/spa /app/public
 
 HEALTHCHECK --interval=30s --timeout=3s \
-  CMD /usr/bin/curl -s -f http://localhost:${PORT:-8080}/api/status || exit 1
+  CMD /usr/bin/curl -s -f http://localhost:${PORT:-8080}/api?action=status || exit 1
