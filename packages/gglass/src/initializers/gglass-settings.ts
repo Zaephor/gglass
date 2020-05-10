@@ -3,6 +3,8 @@ import { db } from "../modules/ah-lowdb-plugin";
 import { gglassSettings, model } from "../modules/gglass-settings";
 
 let default_settings = [
+  // User config group
+  // Enable/Disable user registration
   {
     id: "user_registration",
     group: "user",
@@ -10,6 +12,8 @@ let default_settings = [
     default_value: false,
     order: 0,
   },
+  // User Gauth auth group
+  // Enable/Disable gauth user login
   {
     id: "user_gauth_login",
     group: "user_guath",
@@ -17,6 +21,7 @@ let default_settings = [
     default_value: false,
     order: 0,
   },
+  // Enable/Disable gauth user registration
   {
     id: "user_gauth_registration",
     group: "user_guath",
@@ -24,6 +29,7 @@ let default_settings = [
     default_value: false,
     order: 1,
   },
+  // Enable/Disable gauth client_id
   {
     id: "user_gauth_id",
     group: "user_guath",
@@ -31,12 +37,23 @@ let default_settings = [
     default_value: "",
     order: 2,
   },
+  // Enable/Disable gauth client_secret
   {
     id: "user_gauth_secret",
     group: "user_guath",
     type: "password",
     default_value: "",
     order: 3,
+  },
+  // Gglass peer trust configuration
+  // TODO pub/priv key approach later?
+  // Peer key
+  {
+    id: "gglass_peer_key",
+    group: "gglass_peer",
+    type: "string",
+    default_value: "",
+    order: 0,
   },
 ];
 

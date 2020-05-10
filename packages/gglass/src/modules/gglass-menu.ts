@@ -100,6 +100,14 @@ export const gglassMenu = {
       return noParents && (noGroups || emptyGroups || matchGroups);
     });
   },
+  find: async function (url: string): Promise<[model.entry] | false> {
+    await api.lowdb["menu"].read(); // Sync DB
+    let menuEntry = api.lowdb["menu"].get("entries").find({ url }).value();
+    if (!!menuEntry) {
+      return menuEntry;
+    }
+    return false;
+  },
   create: async function (
     label: string,
     sortorder?: number,

@@ -6,7 +6,6 @@ import {
 } from "../modules/gglass-user";
 import { session } from "../modules/ah-session-plugin";
 import { gglassSettings } from "../modules/gglass-settings";
-const util = require("util");
 
 const commandPrefix = "user:";
 
@@ -299,23 +298,5 @@ export class GoogleAuthCallback extends Action {
         }
       }
     }
-  }
-}
-
-// Traefik Validation endpoint
-export class TraefikAuthCheck extends Action {
-  user_logged_in = false;
-
-  constructor() {
-    super();
-    this.name = commandPrefix + "traefik:auth_check";
-    this.description = "Endpoint for traefik to do forward auth";
-    // this.logLevel = "debug";
-    this.inputs = {};
-    this.outputExample = {};
-  }
-
-  async run(data) {
-    console.log(util.inspect(data, false, null, true /* enable colors */));
   }
 }
