@@ -3,3 +3,5 @@
 gglass_config
 lerna-debug.log
 node_modules
+compose/gglass-*
+compose/traefik-*

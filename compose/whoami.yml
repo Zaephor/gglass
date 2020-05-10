@@ -2,26 +2,27 @@ version: "3"
 
 services:
   # whoami service
-  image: containous/whoami
-  restart: always
-  expose:
-    - "80"
-  labels:
-    # Enable for traefik
-    - "traefik.enable=true"
+  whoami:
+    image: containous/whoami
+    restart: always
+    expose:
+      - "80"
+    labels:
+      # Enable for traefik
+      - "traefik.enable=true"
 
-    # Traefik service config
-    - "traefik.http.services.whoami.loadbalancer.server.port=80"
-    - "traefik.http.services.whoami.loadbalancer.healthcheck.path=/health"
-    - "traefik.http.services.whoami.loadbalancer.healthcheck.interval=15s"
-    - "traefik.http.services.whoami.loadbalancer.healthcheck.timeout=3s"
+      # Traefik service config
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
+      - "traefik.http.services.whoami.loadbalancer.healthcheck.path=/health"
+      - "traefik.http.services.whoami.loadbalancer.healthcheck.interval=15s"
+      - "traefik.http.services.whoami.loadbalancer.healthcheck.timeout=3s"
 
-    # Traefik router config
-    - "traefik.http.routers.whoami.service=whoami"
-    - "traefik.http.routers.whoami.rule=PathPrefix(`${URI_PREFIX:-}/whoami`)"
-    - "traefik.http.routers.whoami.tls=true"
-    - "traefik.http.routers.whoami.priority=10"
-    - "traefik.http.routers.whoami.entrypoints=web,websecure"
+      # Traefik router config
+      - "traefik.http.routers.whoami.service=whoami"
+      - "traefik.http.routers.whoami.rule=PathPrefix(`${URI_PREFIX:-}/whoami`)"
+      - "traefik.http.routers.whoami.tls=true"
+      - "traefik.http.routers.whoami.priority=10"
+      - "traefik.http.routers.whoami.entrypoints=web,websecure"
 
-    # Traefik <-> gglass auth middleware
-    - "traefik.http.routers.whoami.middlewares=gglass-auth"
+      # Traefik <-> gglass auth middleware
+      - "traefik.http.routers.whoami.middlewares=gglass-auth"

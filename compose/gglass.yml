@@ -3,7 +3,7 @@ version: "3"
 services:
   # gglass service
   gglass:
-    image: zaephor/gglass
+    image: zaephor/gglass:dev
     restart: always
     expose:
       - "8080"
