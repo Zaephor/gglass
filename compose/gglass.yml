@@ -23,9 +23,14 @@ services:
       - "traefik.http.services.gglass.loadbalancer.server.port=8080"
       - "traefik.http.services.gglass.loadbalancer.server.scheme=http"
 
+      # Gglass health check(optional)
+      - "traefik.http.services.gglass.loadbalancer.healthcheck.path=/api?action=status"
+      - "traefik.http.services.gglass.loadbalancer.healthcheck.interval=15s"
+      - "traefik.http.services.gglass.loadbalancer.healthcheck.timeout=3s"
+
       # Traefik router config
       - "traefik.http.routers.gglass.service=gglass"
-      - "traefik.http.routers.gglass.rule=HostRegexp(`${GGLASS_DOMAIN:-domain.com}`)"
+      - "traefik.http.routers.gglass.rule=HostRegexp(`${GGLASS_DOMAIN:-{catchall:.+}}`)"
       - "traefik.http.routers.gglass.priority=2"
       - "traefik.http.routers.gglass.entrypoints=web,websecure"
 
