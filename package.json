@@ -20,8 +20,8 @@
     "@commitlint/config-lerna-scopes": "^8.3.4",
     "@commitlint/prompt-cli": "^8.3.5",
     "husky": "^4.2.5",
-    "leasot": "^10.3.0",
-    "lerna": "^3.20.2",
+    "leasot": "^10.5.0",
+    "lerna": "^3.21.0",
     "lint-staged": "^10.2.2",
     "prettier": "^2.0.5"
   }
