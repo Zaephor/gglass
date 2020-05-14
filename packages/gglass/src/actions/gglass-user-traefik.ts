@@ -4,6 +4,14 @@ import { gglassSettings } from "../modules/gglass-settings";
 
 const util = require("util");
 
+// Auth flows for traefik's forwardauth behavior
+// Solo - Meant for single host running traefik, gglass, and anything else.
+// ** If a trusted PSK is configured, is added to the response header for traefik to copy with "authResponseHeaders"
+// Trusted relay - Check for PSK header, if present+matches, access is granted. PSK should be added from the solo flow.
+// ** In this case, "public" gglass performs solo-flow and adds the trusted PSK. The "private" gglass sees the trusted PSK and permits access
+// ** This flow assumes the "private" gglass can inherently trust the public one. Possible security issues here
+// TODO: Re-Eval peerKey handling, possibly TOTP of peerkey or Signed-JWT
+
 const commandPrefix = "user:traefik:";
 
 let uriUtil = {
@@ -48,50 +56,53 @@ export class TraefikAuthCheck extends Action {
   }
 
   async run(data) {
-    // Three flows, solo, trusted relay, permission relay
-    // Solo, Compare user groups and uri-prefix groups
-    // * Simple, straightforward, single host
+    let reqPeerKey =
+      data.connection.rawConnection.req.headers["x-gglass-peerkey"];
+    let reqUri = data.connection.rawConnection.req.headers["x-forwarded-uri"];
+    if (!reqUri) {
+      throw new Error(
+        "Error: X-Forwarded-URI was not defined, this endpoint is not meant for direct access."
+      );
+    }
 
-    // Trusted relay, Compare user groups and uri-prefix groups, add shared X-GglassPeerKey header (Make this header configurable later?)
-    // * Two gglass hosts with traefik, direct peers but only one public
-    // * Public gglass performs group comparison, attaches key header if successful
-    // * Private gglass detects key header, bypass group checks
-    // * Only applies to traefik auth_check, ignored for gglass apis
-
-    // Permission relay,
-    // * Two gglass hosts with traefik, direct peers but only one public
-    // * Public gglass adds user groups and key to headers
-    // * Private gglass validates key, compares groups
-    // * Only applies to traefik auth_check, ignored for gglass apis
-
-    let [gglassPeerKey] = await gglassSettings.list("gglass_peer_key");
     console.log(util.inspect(data, false, null, true /* enable colors */));
-    if (data.user === false) {
+
+    // Check if either user is logged in, or if trusted relay key was provided
+    if (data.user === false && typeof reqPeerKey === "undefined") {
       throw new Error("Please login.");
     }
-    let destinationUri =
-      data.connection.rawConnection.req.headers["x-forwarded-uri"];
-    let userGroups = data.user.groups;
-    await api.lowdb["menu"].read(); // Sync DB
-    let menuExact = api.lowdb["menu"]
-      .get("entries")
-      .orderBy(["url"], ["desc"])
-      .find((o) => uriUtil.findExact(o, destinationUri, userGroups))
-      .value();
-    let menuApprox = api.lowdb["menu"]
-      .get("entries")
-      .orderBy(["url"], ["desc"])
-      .find((o) => uriUtil.findEntry(o, destinationUri, userGroups))
-      .value();
-    console.log(
-      util.inspect(
-        { destinationUri, userGroups, menuExact, menuApprox, gglassPeerKey },
-        false,
-        null,
-        true /* enable colors */
-      )
-    );
 
-    // let siteGroups =
+    // Regular auth flow
+    if (data.user && data.user.groups) {
+      await api.lowdb["menu"].read(); // Sync DB
+      let menuExact = api.lowdb["menu"]
+        .get("entries")
+        .orderBy(["url"], ["desc"])
+        .find((o) => uriUtil.findExact(o, reqUri, data.user.groups))
+        .value();
+      let menuApprox = api.lowdb["menu"]
+        .get("entries")
+        .orderBy(["url"], ["desc"])
+        .find((o) => uriUtil.findEntry(o, reqUri, data.user.groups))
+        .value();
+      console.log({ menuExact, menuApprox });
+      if (!menuExact && !menuApprox) {
+        throw new Error("Access denied.");
+      } else {
+        let [gglassPeerKey] = await gglassSettings.list("gglass_peer_key");
+        // If we have a trusted PSK configured, set the header
+        if (!!gglassPeerKey.value) {
+          data.connection.setHeader("x-gglass-peerkey", gglassPeerKey.value);
+        }
+      }
+    }
+
+    // Validate trusted relay PSK
+    if (typeof reqPeerKey === "string") {
+      let [gglassPeerKey] = await gglassSettings.list("gglass_peer_key");
+      if (reqPeerKey !== gglassPeerKey.value) {
+        throw new Error("Access denied.");
+      }
+    }
   }
 }
