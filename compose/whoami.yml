@@ -20,9 +20,9 @@ services:
       # Traefik router config
       - "traefik.http.routers.whoami.service=whoami"
       - "traefik.http.routers.whoami.rule=PathPrefix(`${URI_PREFIX:-}/whoami`)"
-      - "traefik.http.routers.whoami.tls=true"
+      - "traefik.http.routers.whoami.tls=false"
       - "traefik.http.routers.whoami.priority=10"
       - "traefik.http.routers.whoami.entrypoints=web,websecure"
 
       # Traefik <-> gglass auth middleware
-      - "traefik.http.routers.whoami.middlewares=gglass-auth"
+      - "traefik.http.routers.whoami.middlewares=gglass-auth@docker"

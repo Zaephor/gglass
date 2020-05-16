@@ -8,6 +8,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      # Remove for production
+      - "8080:8080"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -31,6 +33,10 @@ services:
       - "--certificatesResolvers.le.acme.storage=/acme/acme.json"
       - "--certificatesResolvers.le.acme.httpChallenge.entryPoint=web"
 
+      # Remove for production
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+    labels:
       ## Some overkill extras
       # Https redirection middleware
       - "traefik.http.middlewares.httpsredirect.redirectscheme.scheme=https"
