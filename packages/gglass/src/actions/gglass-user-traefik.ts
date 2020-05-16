@@ -15,24 +15,20 @@ const util = require("util");
 const commandPrefix = "user:traefik:";
 
 let uriUtil = {
-  findExact(o, url, groups) {
+  find(type, o, url, groups) {
+    // Filter out entries missing a url
     if (!o.url) {
       return false;
     }
-    if (o.url === url) {
-      if (groups.length < o.groups) {
-        return o.groups.some((x) => groups.indexOf(x) != -1);
-      } else {
-        return groups.some((x) => o.groups.indexOf(x) != -1);
+    if (
+      (type === "exact" && o.url === url) ||
+      (type === "prefix" && url.startsWith(o.url))
+    ) {
+      // Entry has no groups, wide-open
+      if (o.groups && o.groups.length === 0) {
+        return true;
       }
-    }
-  },
-  findEntry(o, url, groups) {
-    if (!o.url) {
-      return false;
-    }
-    // if (o.url.startsWith(url) || url.startsWith(o.url)) {
-    if (url.startsWith(o.url)) {
+      // Check for overlapping groups
       if (groups.length < o.groups) {
         return o.groups.some((x) => groups.indexOf(x) != -1);
       } else {
@@ -78,12 +74,12 @@ export class TraefikAuthCheck extends Action {
       let menuExact = api.lowdb["menu"]
         .get("entries")
         .orderBy(["url"], ["desc"])
-        .find((o) => uriUtil.findExact(o, reqUri, data.user.groups))
+        .find((o) => uriUtil.find("exact", o, reqUri, data.user.groups))
         .value();
       let menuApprox = api.lowdb["menu"]
         .get("entries")
         .orderBy(["url"], ["desc"])
-        .find((o) => uriUtil.findEntry(o, reqUri, data.user.groups))
+        .find((o) => uriUtil.find("prefix", o, reqUri, data.user.groups))
         .value();
       console.log({ menuExact, menuApprox });
       if (!menuExact && !menuApprox) {
