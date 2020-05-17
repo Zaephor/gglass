@@ -46,14 +46,22 @@ let default_settings = [
     order: 3,
   },
   // Gglass peer trust configuration
-  // TODO pub/priv key approach later?
-  // Peer key
+  // Parent IP: Used for gglass<->gglass communication
   {
-    id: "gglass_peer_key",
-    group: "gglass_peer",
+    id: "gglass_parent_ip",
+    group: "gglass_parent",
     type: "string",
     default_value: "",
     order: 0,
+  },
+  // TODO pub/priv key approach later?
+  // PSK
+  {
+    id: "gglass_psk",
+    group: "gglass_parent",
+    type: "string",
+    default_value: "",
+    order: 1,
   },
 ];
 

@@ -10,7 +10,7 @@ const util = require("util");
 // Trusted relay - Check for PSK header, if present+matches, access is granted. PSK should be added from the solo flow.
 // ** In this case, "public" gglass performs solo-flow and adds the trusted PSK. The "private" gglass sees the trusted PSK and permits access
 // ** This flow assumes the "private" gglass can inherently trust the public one. Possible security issues here
-// TODO: Re-Eval peerKey handling, possibly TOTP of peerkey or Signed-JWT
+// TODO: Re-Eval psk handling, possibly TOTP of peerkey or Signed-JWT
 
 const commandPrefix = "user:traefik:";
 
@@ -52,8 +52,7 @@ export class TraefikAuthCheck extends Action {
   }
 
   async run(data) {
-    let reqPeerKey =
-      data.connection.rawConnection.req.headers["x-gglass-peerkey"];
+    let reqPeerKey = data.connection.rawConnection.req.headers["x-gglass-psk"];
     let reqUri = data.connection.rawConnection.req.headers["x-forwarded-uri"];
     if (!reqUri) {
       throw new Error(
@@ -85,18 +84,18 @@ export class TraefikAuthCheck extends Action {
       if (!menuExact && !menuApprox) {
         throw new Error("Access denied.");
       } else {
-        let [gglassPeerKey] = await gglassSettings.list("gglass_peer_key");
+        let [gglassPresharedKey] = await gglassSettings.list("gglass_psk");
         // If we have a trusted PSK configured, set the header
-        if (!!gglassPeerKey.value) {
-          data.connection.setHeader("x-gglass-peerkey", gglassPeerKey.value);
+        if (!!gglassPresharedKey.value) {
+          data.connection.setHeader("x-gglass-psk", gglassPresharedKey.value);
         }
       }
     }
 
     // Validate trusted relay PSK
     if (typeof reqPeerKey === "string") {
-      let [gglassPeerKey] = await gglassSettings.list("gglass_peer_key");
-      if (reqPeerKey !== gglassPeerKey.value) {
+      let [gglassPresharedKey] = await gglassSettings.list("gglass_psk");
+      if (reqPeerKey !== gglassPresharedKey.value) {
         throw new Error("Access denied.");
       }
     }
