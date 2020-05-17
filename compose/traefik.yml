@@ -13,8 +13,8 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./traefik-config:/config"
-      - "./traefik-acme:/acme"
+      - "./config-traefik:/config"
+      - "./acme-traefik:/acme"
     command:
       # Listen for 80/443
       - "--entrypoints.web.address=:80"

@@ -10,7 +10,8 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./gglass-config:/config"
+      - "./config-gglass:/config"
+      - "./config-traefik:/config-traefik"
     environment:
       PUID: "${PUID:-1000}"
       PGID: "${PGID:-1000}"
