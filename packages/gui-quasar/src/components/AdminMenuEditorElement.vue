@@ -37,13 +37,13 @@
                 clearable
                 filled
                 dense
-                v-model="update.parent"
+                v-model="update.category"
                 :options="menu"
                 option-value="id"
                 emit-value
                 map-options
                 options-dense
-                label="Parent"
+                label="Category"
               />
 
               <q-select
@@ -101,7 +101,7 @@ export default {
         icon: null,
         url: null,
         target: null,
-        parent: null,
+        category: null,
         groups: [],
       },
     };
@@ -121,7 +121,7 @@ export default {
         icon: null,
         url: null,
         target: null,
-        parent: null,
+        category: null,
         groups: [],
       };
     },
