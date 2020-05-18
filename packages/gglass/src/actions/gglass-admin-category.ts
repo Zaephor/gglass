@@ -1,7 +1,7 @@
 import { Action, ActionProcessor } from "actionhero";
-import { gglassMenu, inputs } from "../modules/gglass-menu";
+import { gglassCategory, inputs } from "../modules/gglass-menu";
 
-const commandPrefix = "admin:menu:";
+const commandPrefix = "admin:category:";
 
 // Base action
 abstract class AdminAction extends Action {
@@ -12,60 +12,54 @@ abstract class AdminAction extends Action {
   }
 }
 
-// Admin Menu actions
-export class AdminMenuList extends AdminAction {
+// Admin category actions
+export class AdminCategoryList extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "list";
-    this.description = "List the nav menu for editing";
+    this.description = "List nav categories";
     this.inputs = {
       id: { required: false },
-      category: { required: false },
     };
     this.outputExample = {
-      menu: [
+      categories: [
         {
           id: "6730b403-1d82-4617-94b9-605340198f3d",
-          label: "A",
+          label: "Alpha",
           icon: "cloud",
-          url: "/a",
         },
         {
           id: "bbc0accf-8b9b-4fce-8b04-0f0a6cc728f8",
-          label: "B",
+          label: "Beta",
           icon: "security",
-          url: "/b",
-        },
-        {
-          id: "33b2a141-3bbe-4a24-b1db-3acfd610418e",
-          label: "A-A",
-          icon: "scanner",
-          url: "/a/a",
+          groups: [],
         },
       ],
     };
   }
 
   async run(data) {
-    if (!!data.params.category) {
-      data.response.menu = await gglassMenu.find({
-        category: data.params.category,
-      });
-    } else {
-      data.response.menu = !!data.params.id
-        ? await gglassMenu.list(data.params.id)
-        : await gglassMenu.list();
-    }
+    data.response.categories = !!data.params.id
+      ? await gglassCategory.list(data.params.id)
+      : await gglassCategory.list();
   }
 }
 
-export class AdminMenuCreate extends AdminAction {
+export class AdminCategoryCreate extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "create";
-    this.description = "create a menu item";
-    this.inputs = inputs.menu("create");
-    this.outputExample = {};
+    this.description = "create a category";
+    this.inputs = inputs.category("create");
+    this.outputExample = {
+      created: true,
+      category: {
+        id: "bbc0accf-8b9b-4fce-8b04-0f0a6cc728f8",
+        label: "Beta",
+        icon: "security",
+        groups: [],
+      },
+    };
   }
 
   async run(data) {
@@ -75,24 +69,32 @@ export class AdminMenuCreate extends AdminAction {
         payload[attr] = data.params[attr];
       }
     });
-    let entry = await gglassMenu.create(payload);
+    let entry = await gglassCategory.create(payload);
     data.response.created = !!entry.id;
     if (data.response.created) {
-      data.response.entry = entry;
+      data.response.category = entry;
     }
   }
 }
 
-export class AdminMenuUpdate extends AdminAction {
+export class AdminCategoryUpdate extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "update";
-    this.description = "Replace a menu item configuration";
+    this.description = "Update a category";
     this.inputs = {
       id: { required: true },
-      ...inputs.menu("update"),
+      ...inputs.category("update"),
     };
-    this.outputExample = {};
+    this.outputExample = {
+      updated: true,
+      category: {
+        id: "bbc0accf-8b9b-4fce-8b04-0f0a6cc728f8",
+        label: "Beta",
+        icon: "security",
+        groups: [],
+      },
+    };
   }
 
   async run(data) {
@@ -102,19 +104,19 @@ export class AdminMenuUpdate extends AdminAction {
         payload[attr] = data.params[attr];
       }
     });
-    let entry = await gglassMenu.replace(data.params.id, payload);
+    let entry = await gglassCategory.replace(data.params.id, payload);
     data.response.updated = !!entry.id;
-    if (data.response.updated) {
-      data.response.entry = entry;
+    if (data.response.created) {
+      data.response.category = entry;
     }
   }
 }
 
-export class AdminMenuDelete extends AdminAction {
+export class AdminCategoryDelete extends AdminAction {
   constructor() {
     super();
     this.name = commandPrefix + "delete";
-    this.description = "Delete a menu item";
+    this.description = "Delete a category";
     this.inputs = {
       id: { required: true },
     };
@@ -122,6 +124,6 @@ export class AdminMenuDelete extends AdminAction {
   }
 
   async run(data) {
-    data.response.deleted = await gglassMenu.delete(data.params.id);
+    data.response.deleted = await gglassCategory.delete(data.params.id);
   }
 }

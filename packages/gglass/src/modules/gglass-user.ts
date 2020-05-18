@@ -4,6 +4,7 @@ import { api } from "actionhero";
 import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcryptjs";
 import { gglassSettings } from "./gglass-settings";
+import { LowdbCrud } from "./lowdb-crud";
 
 const saltRounds = 5;
 
@@ -22,6 +23,8 @@ export namespace model {
     icon?: string;
   }
 }
+
+export const gglassGroup = new LowdbCrud({ db: "user", table: "groups" });
 
 const googleUtil = {
   defaultScope: [

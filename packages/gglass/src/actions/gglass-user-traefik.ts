@@ -11,6 +11,7 @@ const util = require("util");
 // ** In this case, "public" gglass performs solo-flow and adds the trusted PSK. The "private" gglass sees the trusted PSK and permits access
 // ** This flow assumes the "private" gglass can inherently trust the public one. Possible security issues here
 // TODO: Re-Eval psk handling, possibly TOTP of peerkey or Signed-JWT
+// TODO: Rewrite this to utilize lowdbCrud
 
 const commandPrefix = "user:traefik:";
 
@@ -71,12 +72,12 @@ export class TraefikAuthCheck extends Action {
     if (data.user && data.user.groups) {
       await api.lowdb["menu"].read(); // Sync DB
       let menuExact = api.lowdb["menu"]
-        .get("entries")
+        .get("menu")
         .orderBy(["url"], ["desc"])
         .find((o) => uriUtil.find("exact", o, reqUri, data.user.groups))
         .value();
       let menuApprox = api.lowdb["menu"]
-        .get("entries")
+        .get("menu")
         .orderBy(["url"], ["desc"])
         .find((o) => uriUtil.find("prefix", o, reqUri, data.user.groups))
         .value();

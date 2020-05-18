@@ -16,12 +16,12 @@ export class GglassUser extends Initializer {
     let adminGroup: model.group = {
       id: "admin",
       // label: "Admin",
-      icon: "adb",
+      icon: "fas fa-user-ninja",
     };
     let userGroup: model.group = {
       id: "user",
       // label: "User",
-      icon: "child_care",
+      icon: "fas fa-user-injured",
     };
     db.initialize("user", {
       users: [],

@@ -1,6 +1,7 @@
 import { api, Action } from "actionhero";
 
 export class ShowDocumentation extends Action {
+  user_logged_in = false;
   constructor() {
     super();
     this.name = "showDocumentation";

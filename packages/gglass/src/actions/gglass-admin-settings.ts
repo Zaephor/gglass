@@ -1,4 +1,4 @@
-import { Action, ActionProcessor, api, config } from "actionhero";
+import { Action, ActionProcessor } from "actionhero";
 import { gglassSettings } from "../modules/gglass-settings";
 
 const commandPrefix = "admin:settings:";
@@ -46,7 +46,9 @@ export class UpdateSetting extends AdminAction {
   }
 
   async run(data) {
-    let result = await gglassSettings.update(data.params.id, data.params.value);
+    let result = await gglassSettings.update(data.params.id, {
+      value: data.params.value,
+    });
     data.response.updated = result.updated;
   }
 }
@@ -63,7 +65,10 @@ export class ResetSetting extends AdminAction {
   }
 
   async run(data) {
-    let result = await gglassSettings.reset(data.params.id);
+    let [entry] = await gglassSettings.list(data.params.id);
+    delete entry.id;
+    delete entry.value;
+    let result = await gglassSettings.replace(data.params.id, entry);
     data.response.reset = result.reset;
   }
 }

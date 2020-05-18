@@ -1,6 +1,6 @@
 import { Initializer, log } from "actionhero";
 import { db } from "../modules/ah-lowdb-plugin";
-import { gglassSettings, model } from "../modules/gglass-settings";
+import { gglassSettings } from "../modules/gglass-settings";
 
 let default_settings = [
   // User config group
@@ -86,6 +86,10 @@ export class GglassSettings extends Initializer {
     );
     default_settings.forEach((setting) => {
       gglassSettings.list(setting.id).then(([entry]) => {
+        if (setting["value"]) {
+          // Value should never be defined from the above defaults, but clearing it here just in-case I forget
+          delete setting["value"];
+        }
         // TODO: Proper error checking in this section
         if (!entry) {
           // Doesn't exists
@@ -97,14 +101,7 @@ export class GglassSettings extends Initializer {
               ": Creating config " +
               setting.id
           );
-          gglassSettings.create(
-            setting.id,
-            setting.type,
-            undefined,
-            setting.default_value,
-            setting.group,
-            setting.order
-          );
+          gglassSettings.create(setting);
         } else if (
           !!entry &&
           (entry.default_value !== setting.default_value ||
@@ -120,13 +117,7 @@ export class GglassSettings extends Initializer {
               ": Updating defaults for " +
               setting.id
           );
-          gglassSettings.update(
-            setting.id,
-            undefined,
-            setting.default_value || undefined,
-            setting.group || undefined,
-            setting.order || undefined
-          );
+          gglassSettings.replace(setting.id, { ...entry, ...setting });
         }
       });
     });
