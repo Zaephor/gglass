@@ -1,4 +1,5 @@
 import { LowdbCrud } from "./lowdb-crud";
+import { api } from "actionhero";
 
 // TODO: Should probably give up on using Typescript interfaces, I seem to be relying on actionhero to enforce them anyhow
 export namespace model {
@@ -30,20 +31,94 @@ export const inputs = {
       icon: { required: false },
       url: { required: false },
       target: { required: false },
-      category: { required: false },
-      groups: { required: false },
-    };
-  },
-  category(command) {
-    return {
-      label: { required: command === "create" },
-      sortorder: { required: false },
-      icon: { required: false },
+      parent: { required: false },
       groups: { required: false },
     };
   },
 };
 
-export const gglassCategory = new LowdbCrud({ db: "menu", table: "category" });
+export const util = {
+  groupFilter(elementGroups, userGroups) {
+    if (elementGroups.length === 0) {
+      return true;
+    }
+    if (userGroups.length === 0 && elementGroups.length > 0) {
+      return false;
+    }
+    return elementGroups.some((x) => userGroups.indexOf(x) != -1);
+  },
+};
 
-export const gglassMenu = new LowdbCrud({ db: "menu", table: "menu" });
+class menuCrud extends LowdbCrud {
+  async listAll(id?: string) {
+    await api.lowdb["menu"].read(); // Sync DB
+    let responseElements = [];
+    // Get raw elements, presorted on parent idx and sortorder, then by label
+    let rawElements = !!id
+      ? [api.lowdb["menu"].get("menu").find({ id }).value()]
+      : api.lowdb["menu"]
+          .get("menu")
+          .orderBy(["parent", "sortorder", "label"], ["desc", "asc", "asc"])
+          .value();
+
+    // Process each menu item
+    rawElements.forEach((ele) => {
+      let parentIdx = null;
+      if (!!ele.parent) {
+        parentIdx = api.lowdb["menu"]._.findIndex(responseElements, {
+          id: ele.parent,
+        });
+      }
+      if (!ele.parent || parentIdx === -1 || parentIdx === null) {
+        responseElements.push(ele);
+      } else {
+        if (!responseElements[parentIdx].children) {
+          responseElements[parentIdx].children = [];
+        }
+        if (!!responseElements[parentIdx].children) {
+          responseElements[parentIdx].children.push(ele);
+        }
+      }
+    });
+    return responseElements;
+  }
+
+  async listFiltered(groupFilter: Array<string> = [], id?: string) {
+    await api.lowdb["menu"].read(); // Sync DB
+    let responseElements = [];
+    // Get raw elements, presorted on parent idx and sortorder, then by label
+    let rawElements = !!id
+      ? [api.lowdb["menu"].get("menu").find({ id }).value()]
+      : api.lowdb["menu"]
+          .get("menu")
+          .orderBy(["parent", "sortorder", "label"], ["desc", "asc", "asc"])
+          .value();
+
+    // Process each menu item
+    rawElements.forEach((ele) => {
+      let parentIdx = null;
+      if (!!ele.parent) {
+        parentIdx = api.lowdb["menu"]._.findIndex(responseElements, {
+          id: ele.parent,
+        });
+      }
+      console.log({ parentIdx });
+      // if (!ele.parent || parentIdx === -1 || parentIdx === null) {
+      if (!ele.parent || parentIdx === null) {
+        responseElements.push(ele);
+      } else if (parentIdx >= 0) {
+        if (!responseElements[parentIdx].children) {
+          responseElements[parentIdx].children = [];
+        }
+        if (!!responseElements[parentIdx].children) {
+          responseElements[parentIdx].children.push(ele);
+        }
+      }
+    });
+    return responseElements.filter((ele) => {
+      return util.groupFilter(ele.groups || [], groupFilter);
+    });
+  }
+}
+
+export const gglassMenu = new menuCrud({ db: "menu", table: "menu" });

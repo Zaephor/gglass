@@ -12,6 +12,6 @@ export class GglassMenu extends Initializer {
 
   async initialize() {
     log("[" + this.loadPriority + "] " + this.name + ": Initializing");
-    db.initialize("menu", { category: [], menu: [], entries: [] });
+    db.initialize("menu", { menu: [] });
   }
 }

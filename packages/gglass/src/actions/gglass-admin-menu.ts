@@ -20,7 +20,6 @@ export class AdminMenuList extends AdminAction {
     this.description = "List the nav menu for editing";
     this.inputs = {
       id: { required: false },
-      category: { required: false },
     };
     this.outputExample = {
       menu: [
@@ -28,34 +27,29 @@ export class AdminMenuList extends AdminAction {
           id: "6730b403-1d82-4617-94b9-605340198f3d",
           label: "A",
           icon: "cloud",
-          url: "/a",
+          children: [
+            {
+              id: "33b2a141-3bbe-4a24-b1db-3acfd610418e",
+              label: "A-A",
+              icon: "scanner",
+              url: "/a/a",
+            },
+          ],
         },
         {
           id: "bbc0accf-8b9b-4fce-8b04-0f0a6cc728f8",
           label: "B",
           icon: "security",
-          url: "/b",
-        },
-        {
-          id: "33b2a141-3bbe-4a24-b1db-3acfd610418e",
-          label: "A-A",
-          icon: "scanner",
-          url: "/a/a",
+          children: [],
         },
       ],
     };
   }
 
   async run(data) {
-    if (!!data.params.category) {
-      data.response.menu = await gglassMenu.find({
-        category: data.params.category,
-      });
-    } else {
-      data.response.menu = !!data.params.id
-        ? await gglassMenu.list(data.params.id)
-        : await gglassMenu.list();
-    }
+    data.response.menu = !!data.params.id
+      ? await gglassMenu.listAll(data.params.id)
+      : await gglassMenu.listAll();
   }
 }
 
@@ -102,6 +96,9 @@ export class AdminMenuUpdate extends AdminAction {
         payload[attr] = data.params[attr];
       }
     });
+    if (!!payload["parent"] && payload["parent"] === data.params.id) {
+      delete payload["parent"];
+    }
     let entry = await gglassMenu.replace(data.params.id, payload);
     data.response.updated = !!entry.id;
     if (data.response.updated) {

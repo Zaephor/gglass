@@ -37,8 +37,6 @@ export class MenuList extends Action {
   }
 
   async run(data) {
-    // data.response.menu = await gglassMenu.listFiltered(data.user.groups);
-    // TODO: Check GUI about lazyload and rewrite this for category+menu rather than recursive menu
-    data.response.menu = await gglassMenu.list();
+    data.response.menu = await gglassMenu.listFiltered(data.user.groups);
   }
 }
