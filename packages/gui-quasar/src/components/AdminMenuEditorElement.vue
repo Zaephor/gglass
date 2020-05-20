@@ -6,12 +6,22 @@
       <q-card style="width: 700px; max-width: 80vw;" class="q-pt-none">
         <q-form @submit="saveEntry">
           <q-card-section>
-            <div class="text-h6">{{ element.id }}</div>
+            <div class="text-h6" v-if="!!element.id">
+              Menu Element ({{ element.id }})
+            </div>
+            <div class="text-h6" v-if="!element.id">New Element</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <div class="q-gutter-md">
-              <q-input filled dense v-model="element.id" label="id" disable />
+              <q-input
+                filled
+                dense
+                v-model="element.id"
+                label="id"
+                disable
+                v-if="!!element.id"
+              />
               <q-input filled dense v-model="update.label" label="Label" />
               <q-input filled dense v-model="update.icon" label="Icon" />
               <q-input filled dense v-model="update.url" label="URL" />
@@ -37,13 +47,13 @@
                 clearable
                 filled
                 dense
-                v-model="update.category"
+                v-model="update.parent"
                 :options="menu"
                 option-value="id"
                 emit-value
                 map-options
                 options-dense
-                label="Category"
+                label="Parent"
               />
 
               <q-select
@@ -66,11 +76,12 @@
           <q-card-actions align="right" class="text-primary">
             <div align="left">
               <q-btn
+                v-if="!!element.id"
                 flat
                 color="red"
                 label="Delete"
                 @click="deleteEntry"
-                v-close-popup
+                v-close-popup="2"
               />
             </div>
             <q-space />
@@ -90,60 +101,63 @@ import { mapActions, mapState } from "vuex";
 
 export default {
   name: "AdminMenuEditorElement",
-  props: ["element"],
+  props: ["element", "preset"],
   components: {},
   data() {
     return {
       editing: false,
       update: {
+        id: null,
         label: null,
-        order: null,
+        sortorder: null,
         icon: null,
         url: null,
         target: null,
-        category: null,
+        parent: null,
         groups: [],
       },
     };
   },
   computed: {
     ...mapState({
-      groups: (state) => state.admin.groups,
       menu: (state) => state.admin.menu,
+      groups: (state) => state.admin.groups,
     }),
   },
   methods: {
     ...mapActions("admin", ["syncMenu", "syncGroups"]),
     resetEntry() {
       this.update = {
+        id: null,
         label: null,
-        order: null,
+        sortorder: null,
         icon: null,
         url: null,
         target: null,
-        category: null,
+        parent: null,
         groups: [],
       };
     },
     async loadEntry() {
-      this.syncMenu();
       this.syncGroups();
       Object.keys(this.element).forEach((k) => {
         this.update[k] = this.element[k];
       });
     },
     async saveEntry() {
-      let updateData = {
-        id: this.element.id,
-      };
+      let payload = {};
       Object.keys(this.update).forEach((k) => {
         if (this.update[k] !== null) {
-          updateData[k] = this.update[k];
+          payload[k] = this.update[k];
         }
       });
-      await this.$actionhero.action("admin:menu:update", updateData);
-      this.syncMenu();
+      if (!!this.element.id) {
+        await this.$actionhero.action("admin:menu:update", payload);
+      } else {
+        await this.$actionhero.action("admin:menu:create", payload);
+      }
       this.resetEntry();
+      this.syncMenu();
     },
     async deleteEntry() {
       this.$actionhero

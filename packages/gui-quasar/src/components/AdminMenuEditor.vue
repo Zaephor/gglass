@@ -23,7 +23,7 @@
             />
           </template>
           <template v-slot:after>
-            <q-btn round size="sm" icon="add" @click="editing = true" />
+            <admin-menu-editor-element :element="{}" />
           </template>
         </q-input>
 
@@ -37,78 +37,6 @@
             <admin-menu-editor-element :element="prop.node" />
           </template>
         </q-tree>
-
-        <!-- New entry dialog -->
-        <!-- TODO: Make dialog visually prettier/organized -->
-        <q-dialog v-model="editing" @before-show="loadEntry">
-          <q-card style="width: 700px; max-width: 80vw;" class="q-pt-none">
-            <q-form @submit="createEntry">
-              <q-card-section>
-                <div class="text-h6">New Menu Entry</div>
-              </q-card-section>
-
-              <q-card-section class="q-pt-none">
-                <div class="q-gutter-md">
-                  <q-input filled dense v-model="create.label" label="Label" />
-                  <q-input filled dense v-model="create.icon" label="Icon" />
-                  <q-input filled dense v-model="create.url" label="URL" />
-                  <q-input
-                    filled
-                    dense
-                    v-model.number="create.sortorder"
-                    label="Sort Order"
-                    type="number"
-                  />
-
-                  <q-select
-                    filled
-                    dense
-                    v-model="create.target"
-                    :options="['iframe', '_blank']"
-                    map-options
-                    options-dense
-                    label="Target"
-                  />
-
-                  <q-select
-                    clearable
-                    filled
-                    dense
-                    v-model="create.category"
-                    :options="menu"
-                    option-value="id"
-                    emit-value
-                    map-options
-                    options-dense
-                    label="Category"
-                  />
-
-                  <q-select
-                    filled
-                    dense
-                    v-model="create.groups"
-                    multiple
-                    :options="groups"
-                    option-label="id"
-                    option-value="id"
-                    emit-value
-                    map-options
-                    options-dense
-                    counter
-                    label="Groups"
-                  />
-                </div>
-              </q-card-section>
-
-              <q-card-actions align="right" class="text-primary">
-                <div align="right">
-                  <q-btn flat type="submit" label="Save" v-close-popup />
-                  <q-btn flat label="Cancel" v-close-popup />
-                </div>
-              </q-card-actions>
-            </q-form>
-          </q-card>
-        </q-dialog>
       </q-card-section>
     </q-card>
   </q-expansion-item>
@@ -126,52 +54,15 @@ export default {
   data() {
     return {
       menuFilter: "",
-      editing: false,
-      create: {},
     };
   },
   computed: {
     ...mapState({
-      groups: (state) => state.admin.groups,
       menu: (state) => state.admin.menu,
     }),
   },
   methods: {
-    ...mapActions("admin", ["syncUsers", "syncGroups", "syncMenu"]),
-    async createEntry() {
-      let createData = {};
-      Object.keys(this.create).forEach((k) => {
-        if (this.create[k] !== null) {
-          createData[k] = this.create[k];
-        }
-      });
-      await this.$actionhero.action("admin:menu:create", createData);
-      await this.syncMenu();
-    },
-    async loadEntry() {
-      this.resetEntry();
-      this.syncMenu();
-      this.syncGroups();
-    },
-    async deleteEntry() {
-      this.$actionhero
-        .action("admin:menu:delete", { id: this.entry.id })
-        .then(() => {
-          this.syncMenu();
-        });
-    },
-    resetEntry() {
-      this.create = {
-        id: null,
-        label: null,
-        sortorder: null,
-        icon: null,
-        url: null,
-        target: null,
-        category: null,
-        groups: [],
-      };
-    },
+    ...mapActions("admin", ["syncMenu"]),
     // q-tree filter reset
     resetFilter() {
       this.menuFilter = "";
@@ -179,7 +70,7 @@ export default {
     },
   },
   created: function () {
-    this.resetEntry();
+    this.syncMenu();
   },
 };
 </script>

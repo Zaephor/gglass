@@ -102,7 +102,6 @@ class menuCrud extends LowdbCrud {
           id: ele.parent,
         });
       }
-      console.log({ parentIdx });
       // if (!ele.parent || parentIdx === -1 || parentIdx === null) {
       if (!ele.parent || parentIdx === null) {
         responseElements.push(ele);
