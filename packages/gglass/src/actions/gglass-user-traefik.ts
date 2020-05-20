@@ -16,6 +16,12 @@ const util = require("util");
 const commandPrefix = "user:traefik:";
 
 let uriUtil = {
+  matchUrlPrefix(entryUri, reqUri) {
+    if (entryUri === false) {
+      return false;
+    }
+    return entryUri === reqUri || reqUri.startsWith(entryUri);
+  },
   find(type, o, url, groups) {
     // Filter out entries missing a url
     if (!o.url) {
@@ -53,7 +59,8 @@ export class TraefikAuthCheck extends Action {
   }
 
   async run(data) {
-    let reqPeerKey = data.connection.rawConnection.req.headers["x-gglass-psk"];
+    let reqPresharedKey =
+      data.connection.rawConnection.req.headers["x-gglass-psk"];
     let reqUri = data.connection.rawConnection.req.headers["x-forwarded-uri"];
     if (!reqUri) {
       throw new Error(
@@ -64,25 +71,24 @@ export class TraefikAuthCheck extends Action {
     console.log(util.inspect(data, false, null, true /* enable colors */));
 
     // Check if either user is logged in, or if trusted relay key was provided
-    if (data.user === false && typeof reqPeerKey === "undefined") {
+    if (data.user === false && typeof reqPresharedKey === "undefined") {
       throw new Error("Please login.");
     }
 
     // Regular auth flow
     if (data.user && data.user.groups) {
-      await api.lowdb["menu"].read(); // Sync DB
-      let menuExact = api.lowdb["menu"]
-        .get("menu")
-        .orderBy(["url"], ["desc"])
-        .find((o) => uriUtil.find("exact", o, reqUri, data.user.groups))
-        .value();
-      let menuApprox = api.lowdb["menu"]
-        .get("menu")
-        .orderBy(["url"], ["desc"])
-        .find((o) => uriUtil.find("prefix", o, reqUri, data.user.groups))
-        .value();
-      console.log({ menuExact, menuApprox });
-      if (!menuExact && !menuApprox) {
+      // Get all entries that cover request url
+      let menuMatch = gglassMenu.findAll((o) =>
+        uriUtil.matchUrlPrefix(o.url || false, reqUri)
+      );
+      // For every entry with a parent attribute defined, replace the groups configuration with it's parent's groups
+      // * If the parent has a parent defined, disregard record entirely
+      // Validate the groups to find a successful match
+      let menuApprox = gglassMenu.findOne((o) =>
+        uriUtil.find("prefix", o, reqUri, data.user.groups)
+      );
+      console.log({ menuMatch, menuApprox });
+      if (!menuApprox) {
         throw new Error("Access denied.");
       } else {
         let [gglassPresharedKey] = await gglassSettings.list("gglass_psk");
@@ -94,9 +100,9 @@ export class TraefikAuthCheck extends Action {
     }
 
     // Validate trusted relay PSK
-    if (typeof reqPeerKey === "string") {
+    if (typeof reqPresharedKey === "string") {
       let [gglassPresharedKey] = await gglassSettings.list("gglass_psk");
-      if (reqPeerKey !== gglassPresharedKey.value) {
+      if (reqPresharedKey !== gglassPresharedKey.value) {
         throw new Error("Access denied.");
       }
     }
