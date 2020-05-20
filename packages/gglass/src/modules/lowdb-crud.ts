@@ -20,7 +20,7 @@ export class LowdbCrud {
 
   async find(obj: object) {
     await api.lowdb[this.db].read(); // Sync DB
-    let results = api.lowdb[this.db].get(this.table).find(obj).value();
+    let results = api.lowdb[this.db].get(this.table).filter(obj).value();
     return !!results ? results : false;
   }
 
