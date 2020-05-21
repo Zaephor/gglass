@@ -24,7 +24,6 @@
               />
               <q-input filled dense v-model="update.label" label="Label" />
               <q-input filled dense v-model="update.icon" label="Icon" />
-              <q-input filled dense v-model="update.url" label="URL" />
               <q-input
                 filled
                 dense
@@ -33,7 +32,10 @@
                 type="number"
               />
 
+              <q-input filled dense v-model="update.url" label="URL" />
+
               <q-select
+                v-if="update.url !== null"
                 filled
                 dense
                 v-model="update.target"
@@ -42,8 +44,10 @@
                 options-dense
                 label="Target"
               />
+              <!-- TODO: Add validation to enforce iframe or _blank is selected -->
 
               <q-select
+                v-if="update.groups.length === 0"
                 clearable
                 filled
                 dense
@@ -57,6 +61,7 @@
               />
 
               <q-select
+                v-if="update.parent === null"
                 filled
                 dense
                 v-model="update.groups"
@@ -81,7 +86,7 @@
                 color="red"
                 label="Delete"
                 @click="deleteEntry"
-                v-close-popup="2"
+                v-close-popup
               />
             </div>
             <q-space />
