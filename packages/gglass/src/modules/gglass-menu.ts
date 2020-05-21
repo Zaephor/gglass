@@ -47,21 +47,17 @@ export const util = {
     }
     return elementGroups.some((x) => userGroups.indexOf(x) != -1);
   },
-};
-
-class menuCrud extends LowdbCrud {
-  async listAll(id?: string) {
+  async sortedListAll(id?: string) {
     await api.lowdb["menu"].read(); // Sync DB
-    let responseElements = [];
-    // Get raw elements, presorted on parent idx and sortorder, then by label
-    let rawElements = !!id
+    return !!id
       ? [api.lowdb["menu"].get("menu").find({ id }).value()]
       : api.lowdb["menu"]
           .get("menu")
           .orderBy(["parent", "sortorder", "label"], ["desc", "asc", "asc"])
           .value();
-
-    // Process each menu item
+  },
+  buildMenu(rawElements) {
+    let responseElements = [];
     rawElements.forEach((ele) => {
       let parentIdx = null;
       if (!!ele.parent) {
@@ -70,40 +66,6 @@ class menuCrud extends LowdbCrud {
         });
       }
       if (!ele.parent || parentIdx === -1 || parentIdx === null) {
-        responseElements.push(ele);
-      } else {
-        if (!responseElements[parentIdx].children) {
-          responseElements[parentIdx].children = [];
-        }
-        if (!!responseElements[parentIdx].children) {
-          responseElements[parentIdx].children.push(ele);
-        }
-      }
-    });
-    return responseElements;
-  }
-
-  async listFiltered(groupFilter: Array<string> = [], id?: string) {
-    await api.lowdb["menu"].read(); // Sync DB
-    let responseElements = [];
-    // Get raw elements, presorted on parent idx and sortorder, then by label
-    let rawElements = !!id
-      ? [api.lowdb["menu"].get("menu").find({ id }).value()]
-      : api.lowdb["menu"]
-          .get("menu")
-          .orderBy(["parent", "sortorder", "label"], ["desc", "asc", "asc"])
-          .value();
-
-    // Process each menu item
-    rawElements.forEach((ele) => {
-      let parentIdx = null;
-      if (!!ele.parent) {
-        parentIdx = api.lowdb["menu"]._.findIndex(responseElements, {
-          id: ele.parent,
-        });
-      }
-      // if (!ele.parent || parentIdx === -1 || parentIdx === null) {
-      if (!ele.parent || parentIdx === null) {
         responseElements.push(ele);
       } else if (parentIdx >= 0) {
         if (!responseElements[parentIdx].children) {
@@ -114,7 +76,24 @@ class menuCrud extends LowdbCrud {
         }
       }
     });
-    return responseElements.filter((ele) => {
+    return responseElements;
+  },
+};
+
+class menuCrud extends LowdbCrud {
+  async listAll(id?: string) {
+    // Get raw elements, presorted on parent idx and sortorder, then by label
+    let rawElements = await util.sortedListAll(id);
+    return util.buildMenu(rawElements);
+  }
+
+  async listFiltered(groupFilter: Array<string> = [], id?: string) {
+    // Get raw elements, presorted on parent idx and sortorder, then by label
+    let rawElements = await util.sortedListAll(id);
+    return util.buildMenu(rawElements).filter((ele) => {
+      if (!!ele.parent) {
+        return false;
+      }
       return util.groupFilter(ele.groups || [], groupFilter);
     });
   }
