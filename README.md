@@ -24,14 +24,16 @@ It's a bit rough, but currently targetting the couple design decisions I'm not a
 ### Current Features
 
 - User login/registration
-- Non-hierarchical user group system
+- Non-hierarchy-based user group system
 - Initial support for Google Auth
 - Bookmark menu and editor
+- Traefik integration
+  - Auth middleware endpoint
 
 ### Potential Features/Todos
 
 - Traefik integration
-  - Auth target
+  - ~~Auth target~~
   - URI scraping
 - Docker integration
   - URI scraping
