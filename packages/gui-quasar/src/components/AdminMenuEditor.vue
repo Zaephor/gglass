@@ -27,7 +27,7 @@
           </template>
         </q-input>
 
-        <!-- TODO: Figure out how the heck to get the accordion to quit changing when I hit Edit  -->
+        <!-- TODO: Figure out how the heck to get the accordion to quit changing when I hit Edit buttons -->
         <q-tree :nodes="menu" node-key="id" :filter="menuFilter">
           <template v-slot:default-header="prop">
             <q-icon :name="prop.node.icon" class="q-mr-sm" />
@@ -69,8 +69,6 @@ export default {
       this.$refs.menuFilter.focus();
     },
   },
-  created: function () {
-    this.syncMenu();
-  },
+  created: function () {},
 };
 </script>
