@@ -1,5 +1,5 @@
 import { Action, api } from "actionhero";
-import { gglassMenu } from "../modules/gglass-menu";
+import { gglassMenu, util as menuUtil } from "../modules/gglass-menu";
 import { gglassSettings } from "../modules/gglass-settings";
 
 const util = require("util");
@@ -11,12 +11,18 @@ const util = require("util");
 // ** In this case, "public" gglass performs solo-flow and adds the trusted PSK. The "private" gglass sees the trusted PSK and permits access
 // ** This flow assumes the "private" gglass can inherently trust the public one. Possible security issues here
 // TODO: Re-Eval psk handling, possibly TOTP of peerkey or Signed-JWT
-// TODO: Rewrite this to utilize lowdbCrud
+// TODO: Still not a fan of this section, high probability that I'll rewrite this a few more times later, but I think it's functional
 
 const commandPrefix = "user:traefik:";
 
 let uriUtil = {
   matchUrlPrefix(entryUri, reqUri) {
+    // console.log({
+    //   entryUri,
+    //   reqUri,
+    //   exact: entryUri === reqUri,
+    //   startsWith: reqUri.startsWith(entryUri)
+    // })
     if (entryUri === false) {
       return false;
     }
@@ -59,6 +65,7 @@ export class TraefikAuthCheck extends Action {
   }
 
   async run(data) {
+    // console.log(util.inspect(data, false, null, true /* enable colors */));
     let reqPresharedKey =
       data.connection.rawConnection.req.headers["x-gglass-psk"];
     let reqUri = data.connection.rawConnection.req.headers["x-forwarded-uri"];
@@ -68,8 +75,6 @@ export class TraefikAuthCheck extends Action {
       );
     }
 
-    console.log(util.inspect(data, false, null, true /* enable colors */));
-
     // Check if either user is logged in, or if trusted relay key was provided
     if (data.user === false && typeof reqPresharedKey === "undefined") {
       throw new Error("Please login.");
@@ -78,17 +83,41 @@ export class TraefikAuthCheck extends Action {
     // Regular auth flow
     if (data.user && data.user.groups) {
       // Get all entries that cover request url
-      let menuMatch = gglassMenu.findAll((o) =>
+      let menuMatch = await gglassMenu.findAll((o) =>
         uriUtil.matchUrlPrefix(o.url || false, reqUri)
       );
-      // For every entry with a parent attribute defined, replace the groups configuration with it's parent's groups
-      // * If the parent has a parent defined, disregard record entirely
-      // Validate the groups to find a successful match
-      let menuApprox = gglassMenu.findOne((o) =>
-        uriUtil.find("prefix", o, reqUri, data.user.groups)
+
+      for (let idx = menuMatch.length - 1; idx >= 0; idx--) {
+        // If entry has a parent, check for parents' permissions
+        if (!!menuMatch[idx].parent) {
+          let parent = await gglassMenu.findOne({ id: menuMatch[idx].parent });
+          // If parent has a parent, this entry is already invalid, remove. Also remove entry if parent's permissions don't match
+          if (
+            !!parent.parent ||
+            !menuUtil.groupFilter(parent.groups, data.user.groups)
+          ) {
+            menuMatch.splice(idx, 1);
+          } else {
+            // I can probably disregard this, leaving it in for debugging to understand what permissions a record was associated with
+            menuMatch[idx].groups = parent.groups;
+          }
+        } else if (
+          !menuUtil.groupFilter(menuMatch[idx].groups, data.user.groups)
+        ) {
+          // If root-element, evaluate groups and remove if not a match
+          menuMatch.splice(idx, 1);
+        }
+      }
+
+      console.log(
+        util.inspect(
+          { menuMatch, matchlength: menuMatch.length },
+          false,
+          null,
+          true /* enable colors */
+        )
       );
-      console.log({ menuMatch, menuApprox });
-      if (!menuApprox) {
+      if (menuMatch.length === 0) {
         throw new Error("Access denied.");
       } else {
         let [gglassPresharedKey] = await gglassSettings.list("gglass_psk");
