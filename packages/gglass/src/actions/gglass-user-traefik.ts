@@ -76,11 +76,6 @@ export class TraefikAuthCheck extends Action {
     }
 
     // Check if either user is logged in, or if trusted relay key was provided
-    console.log({
-      reqPresharedKey,
-      reqUri,
-      headers: data.connection.rawConnection.req.headers,
-    });
     if (data.user === false && typeof reqPresharedKey === "undefined") {
       throw new Error("Please login.");
     }
@@ -114,14 +109,14 @@ export class TraefikAuthCheck extends Action {
         }
       }
 
-      console.log(
-        util.inspect(
-          { menuMatch, matchlength: menuMatch.length },
-          false,
-          null,
-          true /* enable colors */
-        )
-      );
+      // console.log(
+      //   util.inspect(
+      //     { menuMatch, matchlength: menuMatch.length },
+      //     false,
+      //     null,
+      //     true /* enable colors */
+      //   )
+      // );
       if (menuMatch.length === 0) {
         throw new Error("Access denied.");
       } else {
