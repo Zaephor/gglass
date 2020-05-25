@@ -1,8 +1,8 @@
 *.swp
 .idea
-compose/.env
-compose/acme-*
-compose/config-*
+ref/compose/.env
+ref/compose/acme-*
+ref/compose/config-*
 gglass_config
 lerna-debug.log
 node_modules

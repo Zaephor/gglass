@@ -8,7 +8,7 @@
   ".*.{js,ts,vue,json,md,yml,yaml}": [
     "prettier --write"
   ],
-  "compose/*.{js,ts,vue,json,md,yml,yaml}": [
+  "ref/**/*.{js,ts,vue,json,md,yml,yaml}": [
     "prettier --write"
   ],
 }

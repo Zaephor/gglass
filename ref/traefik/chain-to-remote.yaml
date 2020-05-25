@@ -1,0 +1,18 @@
+http:
+  # Add the router
+  routers:
+    remote-private:
+      service: remote-private
+      rule: PathPrefix(`/private`)
+      priority: 10
+      entryPoints:
+        - web
+        - websecure
+      middlewares:
+        - "gglass-auth@docker"
+  # Add the service
+  services:
+    remote-private:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.11:80
