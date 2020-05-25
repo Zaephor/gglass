@@ -76,6 +76,11 @@ export class TraefikAuthCheck extends Action {
     }
 
     // Check if either user is logged in, or if trusted relay key was provided
+    console.log({
+      reqPresharedKey,
+      reqUri,
+      headers: data.connection.rawConnection.req.headers,
+    });
     if (data.user === false && typeof reqPresharedKey === "undefined") {
       throw new Error("Please login.");
     }
