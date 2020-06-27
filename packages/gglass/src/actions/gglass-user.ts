@@ -195,3 +195,53 @@ export class LogoutProfileAction extends Action {
     }
   }
 }
+
+// TODO: Unify validation enforcement
+export class UpdateProfileAction extends Action {
+  constructor() {
+    super();
+    this.name = commandPrefix + "update";
+    this.description = "Update own user's profile(Email/Password)";
+    this.inputs = {
+      email: { required: false },
+      password: { required: true },
+      new_password: { required: false },
+    };
+    this.outputExample = {
+      updated: true,
+      error: "Not logged in.",
+    };
+  }
+
+  async run(data) {
+    if (data.session === false || data.user === false) {
+      data.response.update = false;
+      data.response.error = "Not logged in.";
+    } else {
+      let payload = {};
+      // Validate password
+      let userProfile = await gglassUser.login(
+        data.user.email,
+        data.params.password
+      );
+      // Credentials are valid
+      if (!!userProfile) {
+        // Email is set, include in update
+        if (!!data.params.email) {
+          payload["email"] = data.params.email;
+        }
+        if (!!data.params.new_password) {
+          payload["password"] = data.params.new_password;
+        }
+        let { updated, user } = await gglassUser.update(data.user.id, payload);
+        data.response.updated = updated;
+        // if (updated) {
+        //   data.response.user = user;
+        // }
+      } else {
+        data.response.update = false;
+        data.response.error = "Invalid password.";
+      }
+    }
+  }
+}
