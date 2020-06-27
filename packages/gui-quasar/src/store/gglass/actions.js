@@ -60,3 +60,21 @@ export function gglassLogout({ commit }) {
   commit("setNavTab", "profile");
   commit("clearProfile");
 }
+
+export async function gglassUpdate(
+  { commit },
+  { email, password, new_password }
+) {
+  let Vue = this._vm;
+  let result = await Vue.$actionhero.action("user:update", {
+    email,
+    password,
+    new_password,
+  });
+  if (result.user === false || result.error) {
+    //TODO: Error popup
+  } else {
+    commit("updateProfile", result.user);
+    commit("setNavTab", "menu");
+  }
+}

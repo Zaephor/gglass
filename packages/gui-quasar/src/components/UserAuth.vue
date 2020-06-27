@@ -159,7 +159,6 @@
 
     <!--  User Profile/etc section  -->
     <!-- TODO: Make prettier -->
-    <!-- TODO: Add flow for user to change own password -->
     <!-- TODO: Add flow for user to delete self -->
     <template v-if="gglass.user !== false">
       <q-expansion-item
@@ -168,13 +167,7 @@
         label="User Profile"
         @before-show="gglassWhoami"
       >
-        <q-card>
-          <q-card-section>
-            {{ gglass.user.id }} <br />
-            {{ gglass.user.email }} <br />
-            {{ gglass.groups }} <br />
-          </q-card-section>
-        </q-card>
+        <user-profile :user="gglass.user" />
       </q-expansion-item>
 
       <q-item clickable v-ripple v-on:click="gglassLogout">
@@ -189,9 +182,13 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import UserProfile from "components/UserProfile";
 
 export default {
   name: "Auth",
+  components: {
+    UserProfile,
+  },
   computed: {
     ...mapState({
       gglass: (state) => state.gglass,
