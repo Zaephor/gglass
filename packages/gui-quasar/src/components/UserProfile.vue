@@ -27,6 +27,7 @@
           filled
           v-model="update.password"
           label="Current Password"
+          type="password"
           :rules="[(val) => !!val || 'Field is required']"
         >
           <template v-slot:prepend>
@@ -39,6 +40,7 @@
           filled
           v-model="update.new_password"
           label="New Password"
+          type="password"
           :rules="[
             (val) =>
               (val && val.length >= 8) ||
