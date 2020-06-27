@@ -26,29 +26,33 @@ export namespace session {
     connection: ConnectionObj,
     data: any
   ): Promise<boolean> {
-    // Should be called by the user-auth system. Data should be serializable. Ideally userID or some other identifier
-    const key: string = prefix + connection.fingerprint;
-    const csrfToken = crypto.randomBytes(64).toString("hex");
+    if (!!connection.fingerprint) {
+      // Should be called by the user-auth system. Data should be serializable. Ideally userID or some other identifier
+      const key: string = prefix + connection.fingerprint;
+      const csrfToken = crypto.randomBytes(64).toString("hex");
 
-    const sessionData = {
-      data: data,
-      csrfToken: csrfToken,
-      sesionCreatedAt: new Date().getTime(),
-      clientIp: connection.remoteIP,
-      userAgent:
-        connection.type === "web"
-          ? connection.rawConnection.req.headers["user-agent"]
-          : null,
-    };
+      const sessionData = {
+        data: data,
+        csrfToken: csrfToken,
+        sesionCreatedAt: new Date().getTime(),
+        clientIp: connection.remoteIP,
+        userAgent:
+          connection.type === "web"
+            ? connection.rawConnection.req.headers["user-agent"]
+            : null,
+      };
 
-    return (
-      (await api.redis.clients.client.set(
-        key,
-        JSON.stringify(sessionData),
-        "EX",
-        duration
-      )) == "OK"
-    );
+      return (
+        (await api.redis.clients.client.set(
+          key,
+          JSON.stringify(sessionData),
+          "EX",
+          duration
+        )) == "OK"
+      );
+    } else {
+      return false;
+    }
   }
 
   export async function destroy(connection: ConnectionObj): Promise<boolean> {
