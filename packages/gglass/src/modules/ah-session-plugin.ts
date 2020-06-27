@@ -3,7 +3,7 @@ import { config, api } from "actionhero";
 import * as crypto from "crypto";
 
 const prefix: string = config.general.serverName + ":session:";
-const duration: number = 60 * 60; //1 hour
+const duration: number = 60 * 60 * 24 * 7; //1 week default
 
 export namespace session {
   interface ConnectionObj {
