@@ -60,7 +60,8 @@ export const DEFAULT = {
           onlyStaticElements: false,
           settings: {
             path: "/",
-            expires: 3600000,
+            // expires: 3600000, // 1 hour
+            expires: 60 * 60 * 24 * 7, //1 week default
           },
         },
         // Options to be applied to incoming file uploads.
