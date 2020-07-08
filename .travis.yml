@@ -11,7 +11,8 @@ _test-common: &_test-common
 
 _dep-check: &_test-deps
   script:
-    - npx -p npm-check-updates ncu -u && npm install
+    #    - npx -p npm-check-updates ncu -u && npm install
+    - npm run dep-update
     - npm test
 
 _test: &_test

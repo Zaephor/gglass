@@ -6,7 +6,7 @@
     "build:todo": "leasot -x --reporter markdown --ignore '**/dist/**,**/node_modules/**,**.json' '**/*.{js,ts,vue,md,yml,yaml}' > TODO.md && prettier --write TODO.md && git add TODO.md",
     "clean": "lerna clean --yes",
     "commit": "commit",
-    "dep-update": "npx -p npm-check-updates ncu -u && npm install",
+    "dep-update": "npx -p npm-check-updates ncu -u && npm install && lerna run dep-update --concurrency 1 --stream",
     "postinstall": "lerna bootstrap",
     "prettier": "npm run prettier:root && npm run prettier:packages",
     "prettier:root": "prettier --write *.{js,ts,vue,json,md,yml,yaml} .*.{js,ts,vue,json,md,yml,yaml}",
