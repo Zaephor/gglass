@@ -1,4 +1,4 @@
-import { Action, config, api } from "./../index";
+import { Action, config, api } from "actionhero";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -27,6 +27,8 @@ const responses = {
 };
 
 export class Swagger extends Action {
+  user_logged_in = false;
+
   constructor() {
     super();
     this.name = "swagger";

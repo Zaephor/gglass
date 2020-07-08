@@ -120,7 +120,7 @@ export const middleware = {
     global: true,
     priority: 1101,
     preProcessor: async (data) => {
-      // Actions by deafult require you to be logged in, if flag "user_logged_in" is set to false, allow guest use
+      // Actions by default require you to be logged in, if flag "user_logged_in" is set to false, allow guest use
       if (
         data.user === false &&
         !(data.actionTemplate.user_logged_in === false)
