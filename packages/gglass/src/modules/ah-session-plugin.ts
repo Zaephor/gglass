@@ -4,7 +4,8 @@ import * as crypto from "crypto";
 
 const prefix: string = config.general.serverName + ":session:";
 // const duration: number = 60 * 60 * 24 * 7; //1 week default
-const duration: number = config.servers.web.fingerprintOptions.settings.expires; // Sync with cookie value
+const duration: number =
+  config.servers.web.fingerprintOptions.settings.expires / 1000; // Sync with cookie value
 
 export namespace session {
   interface ConnectionObj {

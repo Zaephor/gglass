@@ -61,7 +61,7 @@ export const DEFAULT = {
           settings: {
             path: "/",
             // expires: 3600000, // 1 hour
-            expires: 60 * 60 * 24 * 7, //1 week default
+            expires: 1000 * 60 * 60 * 24 * 7, //1 week default (7 days -> ms)
           },
         },
         // Options to be applied to incoming file uploads.
