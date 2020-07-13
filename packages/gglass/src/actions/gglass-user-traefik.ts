@@ -59,7 +59,7 @@ export class TraefikAuthCheck extends Action {
     super();
     this.name = commandPrefix + "auth_check";
     this.description = "Endpoint for traefik to do forward auth";
-    // this.logLevel = "debug";
+    this.logLevel = "debug";
     this.inputs = {};
     this.outputExample = {};
   }
@@ -70,6 +70,10 @@ export class TraefikAuthCheck extends Action {
       data.connection.rawConnection.req.headers["x-gglass-psk"];
     let reqUri = data.connection.rawConnection.req.headers["x-forwarded-uri"];
     if (!reqUri) {
+      console.log(
+        "DEBUG: " +
+          JSON.stringify(Object.keys(data.connection.rawConnection.req.headers))
+      );
       throw new Error(
         "Error: X-Forwarded-URI was not defined, this endpoint is not meant for direct access."
       );
@@ -118,6 +122,13 @@ export class TraefikAuthCheck extends Action {
       //   )
       // );
       if (menuMatch.length === 0) {
+        console.log(
+          "DEBUG: " +
+            JSON.stringify({
+              headers: Object.keys(data.connection.rawConnection.req.headers),
+              reqUri,
+            })
+        );
         throw new Error("Access denied.");
       } else {
         let [gglassPresharedKey] = await gglassSettings.list("gglass_psk");
