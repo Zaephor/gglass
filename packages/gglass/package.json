@@ -28,10 +28,10 @@
     "node": ">=8.0.0"
   },
   "dependencies": {
-    "actionhero": "23.0.5",
+    "actionhero": "23.0.7",
     "bcryptjs": "^2.4.3",
     "dockerode": "^3.2.1",
-    "googleapis": "^57.0.0",
+    "googleapis": "^59.0.0",
     "ioredis": "latest",
     "lowdb": "^1.0.0",
     "uuid": "^8.3.0",

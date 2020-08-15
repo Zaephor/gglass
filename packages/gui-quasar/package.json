@@ -27,17 +27,17 @@
     "url": "https://github.com/Zaephor/gglass/issues"
   },
   "dependencies": {
-    "@quasar/extras": "^1.9.3",
+    "@quasar/extras": "^1.9.4",
     "axios": "^0.19.2",
     "quasar": "^1.12.13",
-    "vue-i18n": "^8.20.0"
+    "vue-i18n": "^8.21.0"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.6",
     "@quasar/quasar-app-extension-testing": "^1.0.0",
     "@quasar/quasar-app-extension-testing-unit-jest": "^1.0.1",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.5.0",
+    "eslint": "^7.7.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-vue": "^6.2.2"
