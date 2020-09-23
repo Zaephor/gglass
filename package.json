@@ -15,14 +15,14 @@
     "version": "lerna version --conventional-commits"
   },
   "devDependencies": {
-    "@commitlint/cli": "^9.1.1",
-    "@commitlint/config-conventional": "^9.1.1",
-    "@commitlint/config-lerna-scopes": "^9.1.1",
-    "@commitlint/prompt-cli": "^9.1.1",
-    "husky": "^4.2.5",
-    "leasot": "^11.1.0",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@commitlint/config-lerna-scopes": "^11.0.0",
+    "@commitlint/prompt-cli": "^11.0.0",
+    "husky": "^4.3.0",
+    "leasot": "^11.3.0",
     "lerna": "^3.22.1",
-    "lint-staged": "^10.2.11",
-    "prettier": "^2.0.5"
+    "lint-staged": "^10.4.0",
+    "prettier": "^2.1.2"
   }
 }

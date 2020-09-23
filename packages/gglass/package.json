@@ -28,7 +28,7 @@
     "node": ">=8.0.0"
   },
   "dependencies": {
-    "actionhero": "23.0.7",
+    "actionhero": "23.0.10",
     "bcryptjs": "^2.4.3",
     "dockerode": "^3.2.1",
     "googleapis": "^59.0.0",
