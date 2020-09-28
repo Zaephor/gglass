@@ -31,7 +31,7 @@
     "actionhero": "23.0.10",
     "bcryptjs": "^2.4.3",
     "dockerode": "^3.2.1",
-    "googleapis": "^59.0.0",
+    "googleapis": "^60.0.1",
     "ioredis": "latest",
     "lowdb": "^1.0.0",
     "uuid": "^8.3.0",
