@@ -8,7 +8,7 @@ const commandPrefix = "admin:group:";
 abstract class AdminAction extends Action {
   user_groups = ["admin"];
 
-  run(data: ActionProcessor): Promise<void> {
+  run(data: ActionProcessor<Action>): Promise<void> {
     return Promise.resolve(undefined);
   }
 }
